@@ -1,0 +1,14 @@
+# 臺灣魚鄉好風情 — 相依套件
+# Taiwan Aquaculture Photo Map — Requirements
+
+Flask>=3.0.0
+Pillow>=10.0.0
+
+# 安裝指令：
+#   pip install -r requirements.txt
+#
+# 啟動伺服器：
+#   python app.py
+#
+# 開啟瀏覽器：
+#   http://localhost:5000
