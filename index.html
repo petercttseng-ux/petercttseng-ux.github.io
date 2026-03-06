@@ -269,7 +269,7 @@ html,body{height:100%;overflow:hidden;font-family:var(--font-body);background:va
       臺灣魚鄉好風情
     </div>
     <div class="nav-spacer"></div>
-    <span class="db-badge" id="db-badge" title="SQLite 資料庫已連線">
+    <span class="db-badge" id="db-badge" title="SQLite 資料庫 (Render.com)">
       <span class="db-dot"></span>SQLite DB
     </span>
     <div class="nav-user">
@@ -392,19 +392,20 @@ html,body{height:100%;overflow:hidden;font-family:var(--font-body);background:va
   </div>
 </div>
 <script>
-/* ═══════════════════════════════
-   CONFIG
-═══════════════════════════════ */
-const API = "";   // same-origin; Flask serves at /api/*
+const API = "https://aqua-map-server.onrender.com";
 
-/* ═══════════════════════════════
+/* ═══════════════════════════════════════
    API HELPERS
-═══════════════════════════════ */
+═══════════════════════════════════════ */
 async function apiFetch(path, opts = {}) {
   const res = await fetch(API + path, {
     headers: { "Content-Type": "application/json", ...(opts.headers || {}) },
     ...opts
   });
+  if (!res.ok) {
+    const j = await res.json().catch(() => ({}));
+    throw new Error(j.message || res.statusText);
+  }
   return res.json();
 }
 
@@ -416,105 +417,102 @@ async function apiDel(path) {
   return apiFetch(path, { method: "DELETE" });
 }
 
-/* ═══════════════════════════════
+/* ═══════════════════════════════════════
    AUTH
-═══════════════════════════════ */
+═══════════════════════════════════════ */
 let currentUser = null;
 
 function switchTab(mode) {
-  document.getElementById("form-login").style.display    = mode === "login"    ? "" : "none";
-  document.getElementById("form-register").style.display = mode === "register" ? "" : "none";
-  document.getElementById("tab-login").classList.toggle("active",    mode === "login");
-  document.getElementById("tab-register").classList.toggle("active", mode === "register");
-  setAuthMsg("", "");
+  document.getElementById('form-login').style.display    = mode === 'login'    ? '' : 'none';
+  document.getElementById('form-register').style.display = mode === 'register' ? '' : 'none';
+  document.getElementById('tab-login').classList.toggle('active',    mode === 'login');
+  document.getElementById('tab-register').classList.toggle('active', mode === 'register');
+  setAuthMsg('', '');
 }
 
 function setAuthMsg(msg, type) {
-  const el = document.getElementById("auth-msg");
+  const el = document.getElementById('auth-msg');
   el.textContent = msg;
-  el.className   = "auth-msg" + (type ? " " + type : "");
+  el.className   = 'auth-msg' + (type ? ' ' + type : '');
 }
 
 async function doLogin() {
-  const u = document.getElementById("l-user").value.trim();
-  const p = document.getElementById("l-pass").value;
-  if (!u || !p) return setAuthMsg("請輸入帳號與密碼", "error");
-
-  setAuthMsg("登入中…", "");
-  const r = await apiPost("/api/login", { username: u, password: p });
-  if (r.success) {
-    sessionStorage.setItem("tfv_user", JSON.stringify(r.data));
+  const u = document.getElementById('l-user').value.trim();
+  const p = document.getElementById('l-pass').value;
+  if (!u || !p) return setAuthMsg('請輸入帳號與密碼', 'error');
+  setAuthMsg('登入中…', '');
+  try {
+    const r = await apiPost('/api/login', { username: u, password: p });
+    sessionStorage.setItem('tfv_user', JSON.stringify(r.data));
     loginSuccess(r.data);
-  } else {
-    setAuthMsg(r.message, "error");
-  }
+  } catch(e) { setAuthMsg(e.message || '登入失敗', 'error'); }
 }
 
 async function doRegister() {
-  const u  = document.getElementById("r-user").value.trim();
-  const p  = document.getElementById("r-pass").value;
-  const p2 = document.getElementById("r-pass2").value;
-  const n  = document.getElementById("r-name").value.trim();
-  const em = document.getElementById("r-email").value.trim();
+  const u  = document.getElementById('r-user').value.trim();
+  const p  = document.getElementById('r-pass').value;
+  const p2 = document.getElementById('r-pass2').value;
+  const n  = document.getElementById('r-name').value.trim();
+  const em = document.getElementById('r-email').value.trim();
 
-  if (!u || !p || !p2 || !n || !em) return setAuthMsg("所有欄位均為必填", "error");
-  if (p !== p2) return setAuthMsg("兩次密碼不一致", "error");
+  if (!u || !p || !p2 || !n || !em) return setAuthMsg('所有欄位均為必填', 'error');
+  if (!/^[A-Za-z0-9_]{3,20}$/.test(u))       return setAuthMsg('帳號需為 3–20 位英數字或底線', 'error');
+  if (p.length < 6)                             return setAuthMsg('密碼至少需 6 個字元', 'error');
+  if (p !== p2)                                 return setAuthMsg('兩次密碼不一致', 'error');
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) return setAuthMsg('請輸入有效的電子郵件', 'error');
+  if (!/[\u4e00-\u9fff]/.test(n))              return setAuthMsg('請輸入中文姓名', 'error');
 
-  setAuthMsg("註冊中…", "");
-  const r = await apiPost("/api/register", { username: u, password: p, fullname: n, email: em });
-  if (r.success) {
-    setAuthMsg("✓ 註冊成功！請登入", "success");
-    setTimeout(() => switchTab("login"), 1200);
-  } else {
-    setAuthMsg(r.message, "error");
-  }
+  setAuthMsg('註冊中…', '');
+  try {
+    await apiPost('/api/register', { username: u, password: p, fullname: n, email: em });
+    setAuthMsg('✓ 註冊成功！請登入', 'success');
+    setTimeout(() => switchTab('login'), 1200);
+  } catch(e) { setAuthMsg(e.message || '註冊失敗', 'error'); }
 }
 
 function loginSuccess(user) {
   currentUser = user;
-  document.getElementById("auth-screen").style.display = "none";
-  document.getElementById("app").classList.add("visible");
-  document.getElementById("nav-avatar").textContent = user.fullname.charAt(0);
-  document.getElementById("nav-name").textContent   = user.fullname;
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('app').classList.add('visible');
+  document.getElementById('nav-avatar').textContent = user.fullname.charAt(0);
+  document.getElementById('nav-name').textContent   = user.fullname;
   initApp();
 }
 
 function doLogout() {
-  if (!confirm("確定要登出嗎？")) return;
-  sessionStorage.removeItem("tfv_user");
+  if (!confirm('確定要登出嗎？')) return;
+  sessionStorage.removeItem('tfv_user');
   currentUser = null;
-  document.getElementById("app").classList.remove("visible");
-  document.getElementById("auth-screen").style.display = "";
-  // Reset login form
-  document.getElementById("l-user").value = "";
-  document.getElementById("l-pass").value = "";
-  setAuthMsg("", "");
+  document.getElementById('app').classList.remove('visible');
+  document.getElementById('auth-screen').style.display = '';
+  document.getElementById('l-user').value = '';
+  document.getElementById('l-pass').value = '';
+  setAuthMsg('', '');
 }
 
-/* ═══════════════════════════════
+/* ═══════════════════════════════════════
    MAP
-═══════════════════════════════ */
+═══════════════════════════════════════ */
 let map, markerCluster, currentTile;
 const markers = {};
-let currentView = "mine";
+let currentView = 'mine';
 
 const TILES = {
-  satellite: { url:"https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", attr:"© Esri" },
-  osm:       { url:"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", attr:"© OpenStreetMap" },
-  topo:      { url:"https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",   attr:"© OpenTopoMap" },
-  dark:      { url:"https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", attr:"© CartoDB" }
+  satellite: { url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', attr: '© Esri' },
+  osm:       { url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', attr: '© OpenStreetMap' },
+  topo:      { url: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',   attr: '© OpenTopoMap' },
+  dark:      { url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', attr: '© CartoDB' }
 };
 
 function initMap() {
-  map = L.map("map", { zoomControl: false }).setView([23.6978, 120.9605], 8);
+  map = L.map('map', { zoomControl: false }).setView([23.6978, 120.9605], 8);
   currentTile = L.tileLayer(TILES.satellite.url, { attribution: TILES.satellite.attr, maxZoom: 19 }).addTo(map);
-  L.control.zoom({ position: "bottomleft" }).addTo(map);
-
+  L.control.zoom({ position: 'bottomleft' }).addTo(map);
   markerCluster = L.markerClusterGroup({
     iconCreateFunction(cluster) {
       return L.divIcon({
         html: `<div style="background:linear-gradient(135deg,#00c9a7,#00a889);color:#0a1928;font-weight:700;font-size:.85rem;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2.5px solid #fff;box-shadow:0 4px 12px rgba(0,0,0,.4)">${cluster.getChildCount()}</div>`,
-        className: "", iconSize: [36, 36], iconAnchor: [18, 18]
+        className: '', iconSize: [36, 36], iconAnchor: [18, 18]
       });
     }
   });
@@ -530,24 +528,23 @@ function changeTile(key) {
 function makeMarkerIcon() {
   return L.divIcon({
     html: `<div style="width:22px;height:22px;background:linear-gradient(135deg,#00c9a7,#00a889);border:2.5px solid #fff;border-radius:50% 50% 50% 0;transform:rotate(-45deg);box-shadow:0 4px 12px rgba(0,0,0,.45)"></div>`,
-    className: "", iconSize: [22, 22], iconAnchor: [11, 22], popupAnchor: [0, -24]
+    className: '', iconSize: [22, 22], iconAnchor: [11, 22], popupAnchor: [0, -24]
   });
 }
 
 function addMarker(photo) {
   if (!photo.latitude || !photo.longitude) return;
-  const imgUrl  = `/photos/${photo.stored_name}`;
-  const imgHtml = photo.stored_name
-    ? `<img class="popup-img" src="${imgUrl}" alt="" onclick="openLightboxByPhoto(${JSON.stringify(photo).replace(/"/g,'&quot;')})">`
+  const imgSrc  = photo.stored_name ? `${API}/photos/${photo.stored_name}` : null;
+  const imgHtml = imgSrc
+    ? `<img class="popup-img" src="${imgSrc}" alt="" onclick="openLightboxByPhoto(${JSON.stringify(photo).replace(/"/g,'&quot;')})">`
     : `<div class="popup-img-ph"><img src="${LOGO_B64}" alt=""></div>`;
-
   const marker = L.marker([photo.latitude, photo.longitude], { icon: makeMarkerIcon() });
   marker.bindPopup(`
     <div class="popup-inner" onclick="openLightboxByPhoto(${JSON.stringify(photo).replace(/"/g,'&quot;')})">
       ${imgHtml}
       <div class="popup-name">📍 ${esc(photo.filename)}</div>
       <div class="popup-gps">${photo.latitude.toFixed(5)}°N &nbsp; ${photo.longitude.toFixed(5)}°E</div>
-      ${photo.description ? `<div class="popup-desc">📝 ${esc(photo.description)}</div>` : ""}
+      ${photo.description ? `<div class="popup-desc">📝 ${esc(photo.description)}</div>` : ''}
       <div class="popup-hint">點擊照片可放大 🔍</div>
     </div>`, { maxWidth: 220 });
   markerCluster.addLayer(marker);
@@ -565,7 +562,7 @@ function clearAllMarkers() {
 
 function fitAllMarkers() {
   const pts = Object.values(markers).map(m => m.getLatLng());
-  if (pts.length > 0) map.fitBounds(L.latLngBounds(pts).pad(0.15));
+  if (pts.length) map.fitBounds(L.latLngBounds(pts).pad(0.15));
   else map.setView([23.6978, 120.9605], 8);
 }
 
@@ -575,177 +572,170 @@ function flyToPhoto(photo) {
   setTimeout(() => { if (markers[photo.id]) markers[photo.id].openPopup(); }, 1300);
 }
 
-/* ═══════════════════════════════
+/* ═══════════════════════════════════════
    DB INFO PANEL
-═══════════════════════════════ */
+═══════════════════════════════════════ */
 let dbPanelOpen = false;
 function toggleDbPanel() {
   dbPanelOpen = !dbPanelOpen;
-  document.getElementById("db-info-panel").classList.toggle("show", dbPanelOpen);
+  document.getElementById('db-info-panel').classList.toggle('show', dbPanelOpen);
   if (dbPanelOpen) loadDbStats();
 }
 
 async function loadDbStats() {
   try {
-    const r = await apiFetch("/api/stats");
-    if (!r.success) return;
+    const r = await apiFetch('/api/stats');
     const d = r.data;
-    document.getElementById("dbi-path").textContent   = d.db_path   || "—";
-    document.getElementById("dbi-users").textContent  = d.users     + " 人";
-    document.getElementById("dbi-photos").textContent = d.photos    + " 張";
-    document.getElementById("dbi-gps").textContent    = d.photos_with_gps + " 張";
-    document.getElementById("dbi-size").textContent   = d.total_size_kb + " KB";
-    document.getElementById("dbi-dir").textContent    = d.photos_dir || "—";
-  } catch(e) { /* server might be offline in preview */ }
+    document.getElementById('dbi-path').textContent   = d.db_path || '—';
+    document.getElementById('dbi-users').textContent  = d.users + ' 人';
+    document.getElementById('dbi-photos').textContent = d.photos + ' 張';
+    document.getElementById('dbi-gps').textContent    = d.photos_with_gps + ' 張';
+    document.getElementById('dbi-size').textContent   = d.total_size_kb + ' KB';
+    document.getElementById('dbi-dir').textContent    = d.photos_dir || '—';
+  } catch(e) { console.warn('stats:', e.message); }
 }
 
-/* ═══════════════════════════════
+/* ═══════════════════════════════════════
    PHOTO LIST
-═══════════════════════════════ */
+═══════════════════════════════════════ */
 let allPhotos = [];
 
 async function renderPhotoList() {
-  const uid  = currentUser.id;
-  const view = currentView;
-  const url  = view === "all" ? `/api/photos?view=all` : `/api/photos?view=mine&user_id=${uid}`;
-
+  const url = currentView === 'all'
+    ? '/api/photos?view=all'
+    : `/api/photos?view=mine&user_id=${currentUser.id}`;
   try {
     const r = await apiFetch(url);
-    if (!r.success) return;
-    allPhotos = r.data;
-  } catch(e) {
-    allPhotos = [];
-  }
+    allPhotos = r.data || [];
+  } catch(e) { allPhotos = []; }
 
   clearAllMarkers();
   allPhotos.forEach(addMarker);
 
-  const el = document.getElementById("photo-list");
-  if (allPhotos.length === 0) {
+  const el = document.getElementById('photo-list');
+  if (!allPhotos.length) {
     el.innerHTML = `<div class="empty-state">
       <img src="${LOGO_B64}" alt="">
-      <p>${view === "mine" ? "尚未上傳任何照片<br>點擊上方區域開始上傳" : "目前沒有任何使用者上傳照片"}</p>
+      <p>${currentView === 'mine' ? '尚未上傳任何照片<br>點擊上方區域開始上傳' : '目前沒有任何使用者上傳照片'}</p>
     </div>`;
   } else {
     el.innerHTML = allPhotos.map(p => {
-      const imgSrc = p.stored_name ? `/photos/${p.stored_name}` : null;
+      const imgSrc = p.stored_name ? `${API}/photos/${p.stored_name}` : null;
       const isOwn  = p.user_id === currentUser.id;
       return `
       <div class="photo-card" onclick="flyToPhoto(${JSON.stringify(p).replace(/"/g,'&quot;')})">
         <div class="photo-thumb">
-          ${imgSrc ? `<img src="${imgSrc}" alt="" loading="lazy">` : `<img src="${LOGO_B64}" style="width:40px;height:40px;border-radius:50%;opacity:.45;object-fit:contain">`}
+          ${imgSrc
+            ? `<img src="${imgSrc}" alt="" loading="lazy">`
+            : `<img src="${LOGO_B64}" style="width:40px;height:40px;border-radius:50%;opacity:.45;object-fit:contain">`}
         </div>
         <div class="photo-info">
           <div class="photo-name">${esc(p.filename)}</div>
           <div class="photo-gps ${p.latitude ? 'gps-ok' : 'gps-none'}">
-            ${p.latitude ? `📍 ${p.latitude.toFixed(4)}, ${p.longitude.toFixed(4)}` : "📍 無定位資訊"}
+            ${p.latitude ? `📍 ${p.latitude.toFixed(4)}, ${p.longitude.toFixed(4)}` : '📍 無定位資訊'}
           </div>
-          <div class="photo-meta">🕐 ${(p.uploaded||"").slice(0,16)}${view==="all"?` &nbsp;👤 ${esc(p.fullname)}`:""}
-            ${p.filesize ? ` &nbsp;💾 ${(p.filesize/1024).toFixed(0)}KB` : ""}
+          <div class="photo-meta">🕐 ${(p.uploaded||'').slice(0,16)}
+            ${currentView === 'all' ? ` &nbsp;👤 ${esc(p.fullname||'')}` : ''}
+            ${p.filesize ? ` &nbsp;💾 ${(p.filesize/1024).toFixed(0)}KB` : ''}
           </div>
-          ${p.description ? `<div class="photo-desc">📝 ${esc(p.description)}</div>` : ""}
+          ${p.description ? `<div class="photo-desc">📝 ${esc(p.description)}</div>` : ''}
         </div>
         <div class="photo-actions">
-          ${p.latitude ? `<button class="locate-btn" title="飛到位置" onclick="event.stopPropagation();flyToPhoto(${JSON.stringify(p).replace(/"/g,'&quot;')})">📍</button>` : ""}
+          ${p.latitude ? `<button class="locate-btn" title="飛到位置" onclick="event.stopPropagation();flyToPhoto(${JSON.stringify(p).replace(/"/g,'&quot;')})">📍</button>` : ''}
           <button class="locate-btn" title="放大照片" onclick="event.stopPropagation();openLightboxByPhoto(${JSON.stringify(p).replace(/"/g,'&quot;')})">🔍</button>
-          ${isOwn ? `<button class="del-btn" title="刪除" onclick="event.stopPropagation();deletePhoto(${p.id})">🗑</button>` : ""}
+          ${isOwn ? `<button class="del-btn" title="刪除" onclick="event.stopPropagation();deletePhoto(${p.id})">🗑</button>` : ''}
         </div>
       </div>`;
-    }).join("");
+    }).join('');
   }
 
   const gpsCount = allPhotos.filter(p => p.latitude).length;
-  document.getElementById("stat-count").textContent = `${allPhotos.length} 張照片`;
-  document.getElementById("stat-gps").textContent   = `${gpsCount} 有定位`;
+  document.getElementById('stat-count').textContent = `${allPhotos.length} 張照片`;
+  document.getElementById('stat-gps').textContent   = `${gpsCount} 有定位`;
 }
 
 function switchView(v) {
   currentView = v;
-  document.getElementById("vbtn-mine").classList.toggle("active", v === "mine");
-  document.getElementById("vbtn-all").classList.toggle("active",  v === "all");
+  document.getElementById('vbtn-mine').classList.toggle('active', v === 'mine');
+  document.getElementById('vbtn-all').classList.toggle('active',  v === 'all');
   renderPhotoList();
 }
 
 async function deletePhoto(photoId) {
-  if (!confirm("確定要刪除這張照片嗎？此操作無法復原。")) return;
-  const r = await apiDel(`/api/photos/${photoId}?user_id=${currentUser.id}`);
-  if (r.success) {
+  if (!confirm('確定要刪除這張照片嗎？')) return;
+  try {
+    await apiDel(`/api/photos/${photoId}?user_id=${currentUser.id}`);
     removeMarker(photoId);
     renderPhotoList();
-  } else {
-    alert(r.message || "刪除失敗");
-  }
+    if (dbPanelOpen) loadDbStats();
+  } catch(e) { alert(e.message || '刪除失敗'); }
 }
 
-/* ═══════════════════════════════
+/* ═══════════════════════════════════════
    UPLOAD — MULTI
-═══════════════════════════════ */
+═══════════════════════════════════════ */
 let uploadQueue  = [];
 let queueCounter = 0;
 
 function openUploadModal(files) {
-  uploadQueue  = [];
-  queueCounter = 0;
-  document.getElementById("queue-grid").innerHTML     = "";
-  document.getElementById("queue-grid").style.display = "none";
-  document.getElementById("drop-hint").style.display  = "";
-  document.getElementById("batch-gps-summary").innerHTML = "";
-  document.getElementById("upload-desc").value   = "";
-  document.getElementById("upload-msg").textContent = "";
-  document.getElementById("upload-btn-text").textContent = "✅ 確認上傳";
-  document.getElementById("upload-progress-wrap").classList.remove("show");
-  document.getElementById("upload-btn").disabled = false;
-  document.getElementById("upload-modal").classList.add("open");
+  uploadQueue = []; queueCounter = 0;
+  document.getElementById('queue-grid').innerHTML     = '';
+  document.getElementById('queue-grid').style.display = 'none';
+  document.getElementById('drop-hint').style.display  = '';
+  document.getElementById('batch-gps-summary').innerHTML = '';
+  document.getElementById('upload-desc').value        = '';
+  document.getElementById('upload-msg').textContent   = '';
+  document.getElementById('upload-btn-text').textContent = '✅ 確認上傳';
+  document.getElementById('upload-progress-wrap').classList.remove('show');
+  document.getElementById('upload-btn').disabled = false;
+  document.getElementById('upload-modal').classList.add('open');
   if (files && files.length) addFilesToQueue(files);
 }
 
 function closeUploadModal() {
-  document.getElementById("upload-modal").classList.remove("open");
-  document.getElementById("file-input").value = "";
+  document.getElementById('upload-modal').classList.remove('open');
+  document.getElementById('file-input').value = '';
 }
 
 function handleSidebarDrop(e) {
   e.preventDefault();
-  document.getElementById("sidebar-drop").classList.remove("drag-over");
-  const files = [...e.dataTransfer.files].filter(f => f.type.startsWith("image/"));
+  document.getElementById('sidebar-drop').classList.remove('drag-over');
+  const files = [...e.dataTransfer.files].filter(f => f.type.startsWith('image/'));
   if (files.length) openUploadModal(files);
 }
 
 function handleModalDrop(e) {
   e.preventDefault();
-  document.getElementById("modal-drop-area").classList.remove("drag-over");
-  const files = [...e.dataTransfer.files].filter(f => f.type.startsWith("image/"));
+  document.getElementById('modal-drop-area').classList.remove('drag-over');
+  const files = [...e.dataTransfer.files].filter(f => f.type.startsWith('image/'));
   if (files.length) addFilesToQueue(files);
 }
 
 function handleFilesSelect(fileList) {
-  const files = [...fileList].filter(f => f.type.startsWith("image/"));
+  const files = [...fileList].filter(f => f.type.startsWith('image/'));
   if (files.length) addFilesToQueue(files);
-  document.getElementById("file-input").value = "";
+  document.getElementById('file-input').value = '';
 }
 
 function addFilesToQueue(files) {
-  const grid = document.getElementById("queue-grid");
-  grid.style.display = "grid";
-  document.getElementById("drop-hint").style.display = "none";
-
+  const grid = document.getElementById('queue-grid');
+  grid.style.display = 'grid';
+  document.getElementById('drop-hint').style.display = 'none';
   files.forEach(file => {
-    const qid   = "q" + (++queueCounter);
-    const entry = { file, previewUrl: null, lat: null, lon: null, qid };
+    const qid   = 'q' + (++queueCounter);
+    const entry = { file, previewUrl: null, latitude: null, longitude: null, qid };
     uploadQueue.push(entry);
-
-    const card = document.createElement("div");
-    card.className = "queue-item"; card.id = qid;
+    const card = document.createElement('div');
+    card.className = 'queue-item'; card.id = qid;
     card.innerHTML = `<div class="queue-loading"><span class="spinner"></span></div>
       <button class="queue-remove" onclick="removeFromQueue('${qid}')">✕</button>`;
     grid.appendChild(card);
-
     const reader = new FileReader();
     reader.onload = ev => {
       entry.previewUrl = ev.target.result;
       renderQueueCard(entry, false);
       extractGPSLocal(file, (lat, lon) => {
-        entry.lat = lat; entry.lon = lon;
+        entry.latitude = lat; entry.longitude = lon;
         renderQueueCard(entry, true);
         updateGPSSummary();
       });
@@ -758,13 +748,13 @@ function addFilesToQueue(files) {
 function renderQueueCard(entry, gpsResolved) {
   const card = document.getElementById(entry.qid);
   if (!card) return;
-  const name = entry.file.name.length > 14 ? entry.file.name.slice(0,11) + "…" : entry.file.name;
-  const gpsHtml = !gpsResolved
-    ? `<span class="queue-gps none">⏳</span>`
-    : entry.lat ? `<span class="queue-gps ok">📍 ${entry.lat.toFixed(4)}</span>`
-                : `<span class="queue-gps none">⚠ 無GPS</span>`;
+  const name = entry.file.name.length > 14 ? entry.file.name.slice(0, 11) + '…' : entry.file.name;
+  const gpsHtml = !gpsResolved ? `<span class="queue-gps none">⏳</span>`
+    : entry.latitude ? `<span class="queue-gps ok">📍 ${entry.latitude.toFixed(4)}</span>`
+    : `<span class="queue-gps none">⚠ 無GPS</span>`;
   card.innerHTML = `
-    <img class="queue-thumb" src="${entry.previewUrl}" alt="" onclick="event.stopPropagation();previewQueueItem('${entry.qid}')">
+    <img class="queue-thumb" src="${entry.previewUrl}" alt=""
+         onclick="event.stopPropagation();previewQueueItem('${entry.qid}')">
     <div class="queue-overlay">
       <span class="queue-name">${esc(name)}</span>${gpsHtml}
     </div>
@@ -773,175 +763,162 @@ function renderQueueCard(entry, gpsResolved) {
 
 function removeFromQueue(qid) {
   uploadQueue = uploadQueue.filter(e => e.qid !== qid);
-  const card = document.getElementById(qid);
-  if (card) { card.style.transition="all .2s"; card.style.transform="scale(0)"; card.style.opacity="0"; setTimeout(()=>card.remove(),220); }
+  const card  = document.getElementById(qid);
+  if (card) { card.style.transition = 'all .2s'; card.style.transform = 'scale(0)'; card.style.opacity = '0'; setTimeout(() => card.remove(), 220); }
   if (!uploadQueue.length) {
-    document.getElementById("queue-grid").style.display = "none";
-    document.getElementById("drop-hint").style.display  = "";
+    document.getElementById('queue-grid').style.display = 'none';
+    document.getElementById('drop-hint').style.display  = '';
   }
   updateGPSSummary(); updateUploadBtn();
 }
 
 function updateGPSSummary() {
   const t = uploadQueue.length;
-  if (!t) { document.getElementById("batch-gps-summary").innerHTML=""; return; }
-  const g = uploadQueue.filter(e=>e.lat).length;
-  document.getElementById("batch-gps-summary").innerHTML =
-    `<span class="batch-stat all">📸 共 <strong>${t}</strong> 張</span>`+
-    (g ? `<span class="batch-stat gps-ok">📍 ${g} 張有定位</span>` : "")+
-    (t-g ? `<span class="batch-stat gps-none">⚠ ${t-g} 張無定位</span>` : "");
+  if (!t) { document.getElementById('batch-gps-summary').innerHTML = ''; return; }
+  const g = uploadQueue.filter(e => e.latitude).length;
+  document.getElementById('batch-gps-summary').innerHTML =
+    `<span class="batch-stat all">📸 共 <strong>${t}</strong> 張</span>` +
+    (g     ? `<span class="batch-stat gps-ok">📍 ${g} 張有定位</span>`   : '') +
+    (t - g ? `<span class="batch-stat gps-none">⚠ ${t-g} 張無定位</span>` : '');
 }
 
 function updateUploadBtn() {
   const n = uploadQueue.length;
-  document.getElementById("upload-btn-text").textContent = n > 0 ? `✅ 上傳全部 ${n} 張` : "✅ 確認上傳";
+  document.getElementById('upload-btn-text').textContent = n > 0 ? `✅ 上傳全部 ${n} 張` : '✅ 確認上傳';
 }
 
 function previewQueueItem(qid) {
   const entry = uploadQueue.find(e => e.qid === qid);
   if (!entry) return;
-  document.getElementById("lb-img").src  = entry.previewUrl;
-  document.getElementById("lb-img").style.transform = "scale(1)";
-  document.getElementById("lb-img").classList.remove("zoomed");
-  document.getElementById("lb-name").textContent = entry.file.name;
-  document.getElementById("lb-desc").textContent = "";
-  document.getElementById("lb-gps").textContent  = entry.lat ? `📍 ${entry.lat.toFixed(5)}°N, ${entry.lon.toFixed(5)}°E` : "";
-  document.getElementById("lightbox").classList.add("open");
+  document.getElementById('lb-img').src            = entry.previewUrl;
+  document.getElementById('lb-img').style.transform= 'scale(1)';
+  document.getElementById('lb-img').classList.remove('zoomed');
+  document.getElementById('lb-name').textContent   = entry.file.name;
+  document.getElementById('lb-desc').textContent   = '';
+  document.getElementById('lb-gps').textContent    = entry.latitude
+    ? `📍 ${entry.latitude.toFixed(5)}°N,  ${entry.longitude.toFixed(5)}°E` : '';
+  document.getElementById('lightbox').classList.add('open');
 }
 
-/* Client-side EXIF for preview only */
 function extractGPSLocal(file, cb) {
   EXIF.getData(file, function() {
     try {
-      const lat = EXIF.getTag(this,"GPSLatitude"), latR = EXIF.getTag(this,"GPSLatitudeRef");
-      const lon = EXIF.getTag(this,"GPSLongitude"), lonR = EXIF.getTag(this,"GPSLongitudeRef");
+      const lat = EXIF.getTag(this,'GPSLatitude'),  latR = EXIF.getTag(this,'GPSLatitudeRef');
+      const lon = EXIF.getTag(this,'GPSLongitude'), lonR = EXIF.getTag(this,'GPSLongitudeRef');
       if (lat && lon) {
-        const d = v => v[0]+v[1]/60+v[2]/3600;
-        let la=d(lat), lo=d(lon);
-        if(latR==="S") la=-la; if(lonR==="W") lo=-lo;
+        const d = v => v[0] + v[1]/60 + v[2]/3600;
+        let la = d(lat), lo = d(lon);
+        if (latR === 'S') la = -la; if (lonR === 'W') lo = -lo;
         cb(parseFloat(la.toFixed(6)), parseFloat(lo.toFixed(6)));
-      } else cb(null,null);
-    } catch(e){ cb(null,null); }
+      } else { cb(null, null); }
+    } catch(e) { cb(null, null); }
   });
 }
 
 async function doUpload() {
   if (!uploadQueue.length) {
-    document.getElementById("upload-msg").textContent = "請先選取照片";
-    document.getElementById("upload-msg").className   = "auth-msg error";
+    document.getElementById('upload-msg').textContent = '請先選取照片';
+    document.getElementById('upload-msg').className   = 'auth-msg error';
     return;
   }
-
-  const desc = document.getElementById("upload-desc").value.trim();
-  const btn  = document.getElementById("upload-btn");
+  const desc = document.getElementById('upload-desc').value.trim();
+  const btn  = document.getElementById('upload-btn');
   btn.disabled = true;
-  document.getElementById("upload-progress-wrap").classList.add("show");
-  document.getElementById("upload-msg").textContent = "";
+  document.getElementById('upload-progress-wrap').classList.add('show');
+  document.getElementById('upload-msg').textContent = '';
 
+  const total    = uploadQueue.length;
   const formData = new FormData();
-  formData.append("user_id",     currentUser.id);
-  formData.append("description", desc);
-  uploadQueue.forEach(entry => formData.append("photos", entry.file));
+  formData.append('user_id', currentUser.id);
+  formData.append('description', desc);
+  uploadQueue.forEach(entry => formData.append('photos', entry.file));
 
-  const total = uploadQueue.length;
   setProgress(0, total, `正在上傳 ${total} 張照片至伺服器…`);
-
   try {
-    const res = await fetch("/api/photos/upload", { method: "POST", body: formData });
+    const res = await fetch(API + '/api/photos/upload', { method: 'POST', body: formData });
     const r   = await res.json();
-
-    setProgress(total, total, r.message || "上傳完成");
-
-    if (r.data && r.data.length > 0) {
+    setProgress(total, total, r.message || '上傳完成');
+    if (r.data && r.data.length) {
       r.data.forEach(addMarker);
       if (r.data.length === 1 && r.data[0].latitude)
         map.flyTo([r.data[0].latitude, r.data[0].longitude], 14, { duration: 1.0 });
-      else if (r.data.length > 1)
-        setTimeout(fitAllMarkers, 400);
+      else if (r.data.length > 1) setTimeout(fitAllMarkers, 400);
     }
-
     if (r.errors && r.errors.length) {
-      document.getElementById("upload-msg").textContent = "部分失敗：" + r.errors.join("；");
-      document.getElementById("upload-msg").className   = "auth-msg error";
+      document.getElementById('upload-msg').textContent = '部分失敗：' + r.errors.join('；');
+      document.getElementById('upload-msg').className   = 'auth-msg error';
     }
-
     await renderPhotoList();
     if (dbPanelOpen) loadDbStats();
-
-    setTimeout(() => {
-      closeUploadModal();
-      btn.disabled = false;
-    }, 900);
-
+    setTimeout(() => { closeUploadModal(); btn.disabled = false; }, 900);
   } catch(e) {
-    setProgress(0, 1, "");
-    document.getElementById("upload-msg").textContent = "上傳失敗：" + e.message;
-    document.getElementById("upload-msg").className   = "auth-msg error";
+    setProgress(0, 1, '');
+    document.getElementById('upload-msg').textContent = '上傳失敗：' + e.message;
+    document.getElementById('upload-msg').className   = 'auth-msg error';
     btn.disabled = false;
   }
 }
 
 function setProgress(done, total, label) {
-  document.getElementById("progress-fill").style.width = `${Math.round(done/total*100)}%`;
-  document.getElementById("progress-label").textContent = label;
+  document.getElementById('progress-fill').style.width  = `${Math.round(done / total * 100)}%`;
+  document.getElementById('progress-label').textContent = label;
 }
 
-/* ═══════════════════════════════
+/* ═══════════════════════════════════════
    LIGHTBOX
-═══════════════════════════════ */
+═══════════════════════════════════════ */
 let lbZoomed = false;
 
 function openLightboxByPhoto(photo) {
-  const src = photo.stored_name ? `/photos/${photo.stored_name}` : null;
+  const src = photo.stored_name ? `${API}/photos/${photo.stored_name}` : photo.dataUrl;
   if (!src) return;
   lbZoomed = false;
-  const img = document.getElementById("lb-img");
-  img.src = src; img.style.transform="scale(1)"; img.classList.remove("zoomed");
-  document.getElementById("lb-zoom-btn").textContent = "🔍";
-  document.getElementById("lb-name").textContent = photo.filename || "";
-  document.getElementById("lb-desc").textContent = photo.description || "";
-  document.getElementById("lb-gps").textContent  = photo.latitude
-    ? `📍 ${photo.latitude.toFixed(5)}°N,  ${photo.longitude.toFixed(5)}°E` : "";
-  document.getElementById("lightbox").classList.add("open");
+  const img = document.getElementById('lb-img');
+  img.src = src; img.style.transform = 'scale(1)'; img.classList.remove('zoomed');
+  document.getElementById('lb-zoom-btn').textContent = '🔍';
+  document.getElementById('lb-name').textContent = photo.filename || '';
+  document.getElementById('lb-desc').textContent = photo.description || '';
+  document.getElementById('lb-gps').textContent  = photo.latitude
+    ? `📍 ${photo.latitude.toFixed(5)}°N,  ${photo.longitude.toFixed(5)}°E` : '';
+  document.getElementById('lightbox').classList.add('open');
 }
 
-function closeLightbox() { document.getElementById("lightbox").classList.remove("open"); }
+function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
 
 function toggleZoom() {
   lbZoomed = !lbZoomed;
-  const img = document.getElementById("lb-img");
-  img.style.transform = lbZoomed ? "scale(2.2)" : "scale(1)";
-  img.classList.toggle("zoomed", lbZoomed);
-  document.getElementById("lb-zoom-btn").textContent = lbZoomed ? "🔎" : "🔍";
+  const img = document.getElementById('lb-img');
+  img.style.transform = lbZoomed ? 'scale(2.2)' : 'scale(1)';
+  img.classList.toggle('zoomed', lbZoomed);
+  document.getElementById('lb-zoom-btn').textContent = lbZoomed ? '🔎' : '🔍';
 }
 
-/* ═══════════════════════════════
+/* ═══════════════════════════════════════
    SIDEBAR TOGGLE
-═══════════════════════════════ */
+═══════════════════════════════════════ */
 let sidebarOpen = true;
 function toggleSidebar() {
   sidebarOpen = !sidebarOpen;
-  document.getElementById("sidebar").classList.toggle("collapsed", !sidebarOpen);
-  document.getElementById("toggle-sidebar").textContent = sidebarOpen ? "▶" : "◀";
+  document.getElementById('sidebar').classList.toggle('collapsed', !sidebarOpen);
+  document.getElementById('toggle-sidebar').textContent = sidebarOpen ? '▶' : '◀';
   setTimeout(() => map.invalidateSize(), 320);
 }
 
-/* ═══════════════════════════════
+/* ═══════════════════════════════════════
    UTILS
-═══════════════════════════════ */
+═══════════════════════════════════════ */
 function esc(s) {
-  return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-document.addEventListener("keydown", e => {
-  if (e.key === "Escape") { closeLightbox(); closeUploadModal(); }
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeLightbox(); closeUploadModal(); }
 });
 
-/* ═══════════════════════════════
+/* ═══════════════════════════════════════
    APP INIT
-═══════════════════════════════ */
-// Store logo for JS use
-const LOGO_B64 = document.querySelector(".auth-logo img").src;
+═══════════════════════════════════════ */
+const LOGO_B64 = document.querySelector('.auth-logo img').src;
 
 function initApp() {
   initMap();
@@ -949,13 +926,10 @@ function initApp() {
   loadDbStats();
 }
 
-// Auto-login from session
-window.addEventListener("DOMContentLoaded", () => {
-  const saved = sessionStorage.getItem("tfv_user");
-  if (saved) {
-    try { loginSuccess(JSON.parse(saved)); return; } catch(e) {}
-  }
-  document.getElementById("l-pass").addEventListener("keydown", e => e.key==="Enter" && doLogin());
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = sessionStorage.getItem('tfv_user');
+  if (saved) { try { loginSuccess(JSON.parse(saved)); return; } catch(e) {} }
+  document.getElementById('l-pass').addEventListener('keydown', e => e.key === 'Enter' && doLogin());
 });
 </script>
 </body>
