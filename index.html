@@ -477,16 +477,35 @@ function loginSuccess(user) {
   document.getElementById('nav-avatar').textContent = user.fullname.charAt(0);
   document.getElementById('nav-name').textContent   = user.fullname;
   initApp();
+  // Re-attach Enter key on password field each time user logs in
+  const passEl = document.getElementById('l-pass');
+  passEl.removeEventListener('keydown', _passEnterHandler);
+  passEl.addEventListener('keydown', _passEnterHandler);
 }
+
+function _passEnterHandler(e) { if (e.key === 'Enter') doLogin(); }
 
 function doLogout() {
   if (!confirm('確定要登出嗎？')) return;
   sessionStorage.removeItem('tfv_user');
   currentUser = null;
+
+  // ── Destroy Leaflet map so it can be re-initialised on next login ──
+  if (map) {
+    try { map.remove(); } catch(e) {}
+    map = null;
+    markerCluster = null;
+    currentTile   = null;
+    Object.keys(markers).forEach(k => delete markers[k]);
+  }
+  currentView = 'mine';
+
   document.getElementById('app').classList.remove('visible');
+  document.getElementById('photo-list').innerHTML = '';
   document.getElementById('auth-screen').style.display = '';
   document.getElementById('l-user').value = '';
   document.getElementById('l-pass').value = '';
+  switchTab('login');
   setAuthMsg('', '');
 }
 
