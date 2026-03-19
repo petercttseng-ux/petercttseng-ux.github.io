@@ -1033,9 +1033,61 @@ select.form-control { cursor: pointer; }
 }
 .btn-change-pw:hover { background: rgba(255,255,255,0.28); }
 
+
+/* ===== SHARED-DB / LOADING ===== */
+#db-loading-overlay {
+  position: fixed; inset: 0;
+  background: rgba(2,62,92,0.55);
+  backdrop-filter: blur(6px);
+  z-index: 99000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  color: white;
+}
+.db-spinner {
+  width: 52px; height: 52px;
+  border: 5px solid rgba(255,255,255,0.25);
+  border-top-color: #00B4D8;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.db-loading-text { font-size: 15px; font-weight: 600; letter-spacing: 0.5px; }
+.db-loading-sub  { font-size: 12px; opacity: 0.75; }
+
+/* sync status pill in header */
+.sync-pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 11px; border-radius: 14px;
+  font-size: 11.5px; font-weight: 600;
+  border: 1px solid rgba(255,255,255,0.25);
+  color: white;
+  background: rgba(255,255,255,0.12);
+  transition: background 0.3s;
+  cursor: default;
+}
+.sync-pill .dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #06D6A0; flex-shrink: 0;
+  box-shadow: 0 0 6px #06D6A0;
+  animation: pulse 2s infinite;
+}
+.sync-pill .dot.syncing { background: #FFB703; box-shadow: 0 0 6px #FFB703; animation: none; }
+.sync-pill .dot.error   { background: #FF6B6B; box-shadow: 0 0 6px #FF6B6B; animation: none; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.45} }
+
 </style>
 </head>
 <body>
+<!-- DB LOADING OVERLAY -->
+<div id="db-loading-overlay" style="display:none;">
+  <div class="db-spinner"></div>
+  <div class="db-loading-text" id="db-loading-text">正在連線共用資料庫...</div>
+  <div class="db-loading-sub">請稍候</div>
+</div>
 
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
@@ -1171,6 +1223,11 @@ select.form-control { cursor: pointer; }
   </div>
   <div class="header-right">
     <button class="btn-header" onclick="openIdSearch()">🔍 ID查詢</button>
+    <button class="btn-change-pw" onclick="manualRefresh()" title="立即同步資料庫" style="font-size:13px;padding:5px 11px;">🔄</button>
+    <div class="sync-pill" id="sync-pill" title="資料同步狀態">
+      <div class="dot" id="sync-dot"></div>
+      <span id="sync-text">已同步</span>
+    </div>
     <button class="btn-change-pw" onclick="openChangePwModal()" id="btn-change-pw" title="修改密碼">🔒 修改密碼</button>
     <div class="user-badge" onclick="logout()" title="點擊登出">
       👤 <span id="header-user">-</span>
@@ -1623,24 +1680,121 @@ let currentPriority = 'normal';
 let currentPage = 'dashboard';
 let filterStatus = '';
 let currentProgressTaskId = null;
+let autoRefreshTimer = null;
+
+// =============================
+// SHARED DATABASE (window.storage)
+// =============================
+const DB_TASKS_KEY   = 'fri_tasks';
+const DB_PW_KEY      = 'fri_passwords';
+const SHARED = true;   // all users share the same data
+
+function hasSharedStorage() {
+  return typeof window.storage !== 'undefined' && window.storage !== null;
+}
+
+// Low-level read — returns parsed value or null
+async function dbGet(key) {
+  if (hasSharedStorage()) {
+    try {
+      const r = await window.storage.get(key, SHARED);
+      return r ? JSON.parse(r.value) : null;
+    } catch { return null; }
+  } else {
+    // Fallback: localStorage (single-device only)
+    try { const s = localStorage.getItem(key); return s ? JSON.parse(s) : null; } catch { return null; }
+  }
+}
+
+// Low-level write
+async function dbSet(key, value) {
+  const str = JSON.stringify(value);
+  if (hasSharedStorage()) {
+    try { await window.storage.set(key, str, SHARED); return true; } catch { return false; }
+  } else {
+    try { localStorage.setItem(key, str); return true; } catch { return false; }
+  }
+}
+
+// =============================
+// SYNC STATUS UI
+// =============================
+function setSyncStatus(state, text) {
+  const pill = document.getElementById('sync-pill');
+  const dot  = document.getElementById('sync-dot');
+  const span = document.getElementById('sync-text');
+  if (!pill) return;
+  dot.className = 'dot' + (state === 'syncing' ? ' syncing' : state === 'error' ? ' error' : '');
+  span.textContent = text;
+}
+
+function showDbLoading(show, msg = '正在連線共用資料庫...') {
+  const el = document.getElementById('db-loading-overlay');
+  if (!el) return;
+  el.style.display = show ? 'flex' : 'none';
+  const t = document.getElementById('db-loading-text');
+  if (t) t.textContent = msg;
+}
 
 // =============================
 // INIT
 // =============================
-function init() {
-  loadTasks();
+async function init() {
+  showDbLoading(true, '正在載入共用資料庫...');
+  if (!hasSharedStorage()) {
+    console.warn('window.storage not available - falling back to localStorage (data not shared)');
+  }
+  setSyncStatus('syncing', '連線中...');
   populateLoginDepts();
   populateFilterDepts();
   setTodayDate();
+  await loadTasks();
+  showDbLoading(false);
+  setSyncStatus('ok', '已同步');
+  startAutoRefresh();
 }
 
-function loadTasks() {
-  const saved = localStorage.getItem('fri_tasks');
-  tasks = saved ? JSON.parse(saved) : getSampleTasks();
+async function loadTasks() {
+  try {
+    const data = await dbGet(DB_TASKS_KEY);
+    tasks = data || getSampleTasks();
+    // If sample was used, persist immediately so all users share the same start data
+    if (!data) await saveTasks();
+  } catch(e) {
+    tasks = getSampleTasks();
+    setSyncStatus('error', '離線模式');
+  }
 }
 
-function saveTasks() {
-  localStorage.setItem('fri_tasks', JSON.stringify(tasks));
+async function saveTasks() {
+  setSyncStatus('syncing', '儲存中...');
+  const ok = await dbSet(DB_TASKS_KEY, tasks);
+  if (ok) {
+    setSyncStatus('ok', '已同步 ' + new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'}));
+  } else {
+    setSyncStatus('error', '儲存失敗');
+    showToast('⚠️ 資料儲存失敗，請重試', 'error');
+  }
+  return ok;
+}
+
+// =============================
+// AUTO-REFRESH (pull every 30s)
+// =============================
+function startAutoRefresh() {
+  if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+  autoRefreshTimer = setInterval(async () => {
+    if (!currentUser) return;
+    const prev = tasks.length;
+    await loadTasks();
+    refreshAll();
+    // Quietly re-render current page
+    if (currentPage === 'dashboard') renderDashboard();
+    else if (currentPage === 'tasks') renderTaskTable();
+    else if (currentPage === 'my-tasks') renderMyTasks();
+    else if (currentPage === 'overdue') renderOverdue();
+    setSyncStatus('ok', '已同步 ' + new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'}));
+  }, 30000);
 }
 
 function getSampleTasks() {
@@ -2186,7 +2340,7 @@ function editTask(id) {
   openModal('modal-task');
 }
 
-function saveTask() {
+async function saveTask() {
   const name = document.getElementById('f-name').value.trim();
   const dept = document.getElementById('f-dept').value;
   const assigneeEl = document.getElementById('f-assignee');
@@ -2217,17 +2371,17 @@ function saveTask() {
     showToast('新增交辦事項成功！', 'success');
   }
 
-  saveTasks();
+  await saveTasks();
   refreshAll();
   closeModal('modal-task');
   if (currentPage === 'tasks') renderTaskTable();
   if (currentPage === 'dashboard') renderDashboard();
 }
 
-function deleteTask(id) {
+async function deleteTask(id) {
   if (!confirm('確定刪除此交辦事項？此動作無法復原。')) return;
   tasks = tasks.filter(t=>t.id!==id);
-  saveTasks();
+  await saveTasks();
   refreshAll();
   renderTaskTable();
   showToast('已刪除交辦事項', 'error');
@@ -2337,7 +2491,7 @@ function updateSliderDisplay() {
   document.getElementById('prog-pct-display').textContent = v + '%';
 }
 
-function saveProgress() {
+async function saveProgress() {
   const note = document.getElementById('prog-note').value.trim();
   if (!note) { showToast('請填寫進度說明', 'error'); return; }
 
@@ -2355,7 +2509,7 @@ function saveProgress() {
     pct, status, note
   });
 
-  saveTasks();
+  await saveTasks();
   refreshAll();
   closeModal('modal-progress');
 
@@ -2437,8 +2591,8 @@ function showToast(msg, type = '') {
 // PASSWORD MANAGEMENT
 // =============================
 
-const PW_STORE_KEY = 'fri_passwords'; // { "姓名": "hashedPw" }
-const PW_ATTEMPTS_KEY = 'fri_pw_attempts'; // { "姓名": count }
+// PW_STORE_KEY is now DB_PW_KEY = 'fri_passwords' (defined above)
+const PW_ATTEMPTS_KEY = 'fri_pw_attempts'; // kept local per-browser
 const RESET_CODE = 'FRI-RESET';
 const MAX_ATTEMPTS = 5;
 
@@ -2458,11 +2612,11 @@ function hashPw(pw) {
   return (h >>> 0).toString(16) + '_' + (h2 >>> 0).toString(16);
 }
 
-function getPwStore() {
-  try { return JSON.parse(localStorage.getItem(PW_STORE_KEY) || '{}'); } catch { return {}; }
+async function getPwStore() {
+  try { return (await dbGet(DB_PW_KEY)) || {}; } catch { return {}; }
 }
-function savePwStore(store) {
-  localStorage.setItem(PW_STORE_KEY, JSON.stringify(store));
+async function savePwStore(store) {
+  await dbSet(DB_PW_KEY, store);
 }
 
 function getAttempts(name) {
@@ -2479,19 +2633,20 @@ function setAttempts(name, n) {
   } catch {}
 }
 
-function userHasPassword(name) {
-  return !!getPwStore()[name];
+async function userHasPassword(name) {
+  const store = await getPwStore();
+  return !!store[name];
 }
 
-function verifyPw(name, pw) {
-  const store = getPwStore();
+async function verifyPw(name, pw) {
+  const store = await getPwStore();
   return store[name] === hashPw(pw);
 }
 
-function setPwForUser(name, pw) {
-  const store = getPwStore();
+async function setPwForUser(name, pw) {
+  const store = await getPwStore();
   store[name] = hashPw(pw);
-  savePwStore(store);
+  await savePwStore(store);
 }
 
 // ---- UI Helpers ----
@@ -2543,14 +2698,14 @@ function showLoginCard(id) {
   });
 }
 
-function goToPasswordStep() {
+async function goToPasswordStep() {
   const dept = document.getElementById('login-dept').value;
   const name = document.getElementById('login-name').value;
   const role = document.getElementById('login-role').value;
   if (!dept || !name) { showToast('請選擇單位及姓名', 'error'); return; }
   pendingLoginUser = { dept, name, role };
 
-  if (userHasPassword(name)) {
+  if (await userHasPassword(name)) {
     // Show enter-password card
     document.getElementById('pw-greeting').textContent = name + '，歡迎回來';
     document.getElementById('pw-sub-name').textContent = dept;
@@ -2582,7 +2737,7 @@ function showLoginPwCard() {
   showLoginCard('login-card-password');
 }
 
-function doLoginWithPw() {
+async function doLoginWithPw() {
   if (!pendingLoginUser) return;
   const pw = document.getElementById('login-pw-input').value;
   const name = pendingLoginUser.name;
@@ -2596,7 +2751,7 @@ function doLoginWithPw() {
     return;
   }
 
-  if (verifyPw(name, pw)) {
+  if (await verifyPw(name, pw)) {
     setAttempts(name, 0);
     completeLogin(pendingLoginUser);
   } else {
@@ -2615,14 +2770,14 @@ function doLoginWithPw() {
   }
 }
 
-function doSetPassword() {
+async function doSetPassword() {
   const pw1 = document.getElementById('setpw-input1').value;
   const pw2 = document.getElementById('setpw-input2').value;
   if (!pw1 || !pw2) { showToast('請填寫兩個密碼欄位', 'error'); return; }
   if (pw1.length < 6) { showToast('密碼長度至少 6 個字元', 'error'); return; }
   if (pw1 !== pw2) { showToast('兩次密碼不一致，請重新輸入', 'error'); return; }
   if (!pendingLoginUser) return;
-  setPwForUser(pendingLoginUser.name, pw1);
+  await setPwForUser(pendingLoginUser.name, pw1);
   showToast('密碼設定成功！正在登入...', 'success');
   setTimeout(() => completeLogin(pendingLoginUser), 600);
 }
@@ -2634,7 +2789,7 @@ function showForgotPw() {
   showLoginCard('login-card-resetpw');
 }
 
-function doResetPassword() {
+async function doResetPassword() {
   const code = document.getElementById('reset-code-input').value.trim().toUpperCase();
   const pw1 = document.getElementById('reset-pw1').value;
   const pw2 = document.getElementById('reset-pw2').value;
@@ -2642,7 +2797,7 @@ function doResetPassword() {
   if (!pw1 || pw1.length < 6) { showToast('新密碼至少需 6 個字元', 'error'); return; }
   if (pw1 !== pw2) { showToast('兩次密碼不一致', 'error'); return; }
   if (!pendingLoginUser) return;
-  setPwForUser(pendingLoginUser.name, pw1);
+  await setPwForUser(pendingLoginUser.name, pw1);
   setAttempts(pendingLoginUser.name, 0);
   showToast('密碼重設成功！', 'success');
   setTimeout(() => completeLogin(pendingLoginUser), 600);
@@ -2659,20 +2814,38 @@ function openChangePwModal() {
   openModal('modal-change-pw');
 }
 
-function doChangePw() {
+async function doChangePw() {
   const current = document.getElementById('cpw-current').value;
   const pw1 = document.getElementById('cpw-new1').value;
   const pw2 = document.getElementById('cpw-new2').value;
   if (!current) { showToast('請輸入目前密碼', 'error'); return; }
-  if (!verifyPw(currentUser.name, current)) { showToast('目前密碼錯誤', 'error'); return; }
+  if (!await verifyPw(currentUser.name, current)) { showToast('目前密碼錯誤', 'error'); return; }
   if (!pw1 || pw1.length < 6) { showToast('新密碼至少需 6 個字元', 'error'); return; }
   if (pw1 !== pw2) { showToast('兩次新密碼不一致', 'error'); return; }
   if (current === pw1) { showToast('新密碼不可與目前密碼相同', 'error'); return; }
-  setPwForUser(currentUser.name, pw1);
+  await setPwForUser(currentUser.name, pw1);
   closeModal('modal-change-pw');
   showToast('密碼修改成功！', 'success');
 }
 
+
+// =============================
+// MANUAL REFRESH
+// =============================
+async function manualRefresh() {
+  setSyncStatus('syncing', '同步中...');
+  showDbLoading(true, '正在更新資料...');
+  await loadTasks();
+  showDbLoading(false);
+  refreshAll();
+  if (currentPage === 'dashboard') renderDashboard();
+  else if (currentPage === 'tasks') renderTaskTable();
+  else if (currentPage === 'my-tasks') renderMyTasks();
+  else if (currentPage === 'overdue') renderOverdue();
+  else if (currentPage === 'stats') renderStats();
+  setSyncStatus('ok', '已同步 ' + new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'}));
+  showToast('資料已更新', 'success');
+}
 // =============================
 // START
 // =============================
