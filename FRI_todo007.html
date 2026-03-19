@@ -1,0 +1,2208 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>水試所業務交辦小助手</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Oswald:wght@600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ocean: #0077B6;
+  --ocean-light: #00B4D8;
+  --ocean-pale: #90E0EF;
+  --teal: #0CB8A2;
+  --teal-light: #48CAE4;
+  --sky: #ADE8F4;
+  --mint: #CFFCF6;
+  --coral: #FF6B6B;
+  --amber: #FFB703;
+  --lime: #06D6A0;
+  --lavender: #8338EC;
+  --bg: #F0FAFF;
+  --card: #FFFFFF;
+  --text: #023E5C;
+  --text-light: #4A7C9A;
+  --border: #B8E6F5;
+  --shadow: 0 4px 20px rgba(0,119,182,0.12);
+  --shadow-hover: 0 8px 32px rgba(0,119,182,0.22);
+  --radius: 14px;
+  --radius-sm: 8px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Noto Sans TC', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--mint); }
+::-webkit-scrollbar-thumb { background: var(--ocean-light); border-radius: 3px; }
+
+/* ===== HEADER ===== */
+header {
+  background: linear-gradient(135deg, #023E5C 0%, #0077B6 50%, #00B4D8 100%);
+  padding: 0 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 68px;
+  box-shadow: 0 4px 24px rgba(0,60,100,0.25);
+  position: sticky;
+  top: 0;
+  z-index: 200;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.logo-circle {
+  width: 46px; height: 46px;
+  border-radius: 50%;
+  background: white;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+  border: 2px solid var(--ocean-pale);
+  flex-shrink: 0;
+}
+
+.logo-circle img {
+  width: 42px; height: 42px; object-fit: contain;
+}
+
+.sys-title {
+  color: white;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  line-height: 1.2;
+}
+.sys-title small {
+  display: block;
+  font-size: 11px;
+  font-weight: 300;
+  opacity: 0.82;
+  letter-spacing: 0.5px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-badge {
+  background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 24px;
+  padding: 6px 14px;
+  color: white;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.user-badge:hover { background: rgba(255,255,255,0.28); }
+
+.btn-header {
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.35);
+  color: white;
+  padding: 7px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Noto Sans TC', sans-serif;
+}
+.btn-header:hover { background: rgba(255,255,255,0.35); }
+.btn-header.primary {
+  background: var(--teal);
+  border-color: var(--teal);
+}
+.btn-header.primary:hover { background: #0AA090; }
+
+/* ===== LAYOUT ===== */
+.app-wrapper {
+  display: flex;
+  min-height: calc(100vh - 68px);
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+  width: 220px;
+  background: linear-gradient(180deg, #E8F7FF 0%, #F5FDFF 100%);
+  border-right: 1px solid var(--border);
+  padding: 20px 14px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 68px;
+  height: calc(100vh - 68px);
+  overflow-y: auto;
+}
+
+.nav-section { margin-bottom: 20px; }
+.nav-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-light);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 0 8px 8px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.18s;
+  font-size: 13.5px;
+  color: var(--text);
+  position: relative;
+}
+.nav-item:hover {
+  background: rgba(0,180,216,0.12);
+  color: var(--ocean);
+}
+.nav-item.active {
+  background: linear-gradient(135deg, #0077B6, #00B4D8);
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 3px 12px rgba(0,119,182,0.3);
+}
+.nav-item .nav-icon { font-size: 16px; }
+.nav-badge {
+  margin-left: auto;
+  background: var(--coral);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 10px;
+  min-width: 20px;
+  text-align: center;
+}
+.nav-item.active .nav-badge { background: rgba(255,255,255,0.35); }
+
+/* ===== MAIN ===== */
+main {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.page { display: none; }
+.page.active { display: block; }
+
+/* ===== STATS GRID ===== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
+}
+
+.stat-icon {
+  width: 48px; height: 48px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.stat-icon.blue { background: #DBEEFF; }
+.stat-icon.teal { background: #D0FBF4; }
+.stat-icon.amber { background: #FFF4CC; }
+.stat-icon.coral { background: #FFE5E5; }
+.stat-icon.purple { background: #EEE5FF; }
+.stat-icon.green { background: #D0FFE8; }
+
+.stat-info { flex: 1; }
+.stat-num {
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--ocean);
+  line-height: 1;
+}
+.stat-label {
+  font-size: 12px;
+  color: var(--text-light);
+  margin-top: 3px;
+}
+
+/* ===== SECTION HEADER ===== */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+.section-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-title::before {
+  content: '';
+  width: 4px;
+  height: 20px;
+  background: linear-gradient(180deg, var(--ocean), var(--teal));
+  border-radius: 2px;
+}
+
+/* ===== FILTER BAR ===== */
+.filter-bar {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin-bottom: 18px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 24px;
+  padding: 7px 14px;
+  flex: 1;
+  min-width: 200px;
+}
+.search-box input {
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  color: var(--text);
+  width: 100%;
+  outline: none;
+  font-family: 'Noto Sans TC', sans-serif;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filter-select {
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  padding: 6px 12px;
+  font-size: 12.5px;
+  color: var(--text);
+  background: var(--bg);
+  cursor: pointer;
+  outline: none;
+  font-family: 'Noto Sans TC', sans-serif;
+}
+
+.filter-chip {
+  padding: 5px 13px;
+  border-radius: 20px;
+  font-size: 12px;
+  cursor: pointer;
+  border: 1.5px solid var(--border);
+  background: var(--bg);
+  color: var(--text-light);
+  transition: all 0.18s;
+}
+.filter-chip.active {
+  background: var(--ocean);
+  border-color: var(--ocean);
+  color: white;
+}
+
+/* ===== TASK TABLE ===== */
+.task-table-wrapper {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.task-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.task-table thead tr {
+  background: linear-gradient(135deg, #0077B6, #00B4D8);
+  color: white;
+}
+
+.task-table th {
+  padding: 12px 14px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 12.5px;
+  letter-spacing: 0.3px;
+}
+
+.task-table tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+}
+.task-table tbody tr:hover { background: #F0FAFF; }
+.task-table tbody tr:last-child { border-bottom: none; }
+
+.task-table td {
+  padding: 12px 14px;
+  vertical-align: middle;
+}
+
+/* ===== BADGES ===== */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 11.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge-urgent { background: #FFE5E5; color: #D00; }
+.badge-high { background: #FFF0CC; color: #B56000; }
+.badge-normal { background: #D0F0FF; color: #0060A0; }
+.badge-low { background: #D8FFE8; color: #008040; }
+
+.badge-pending { background: #FFF0CC; color: #B56000; }
+.badge-inprogress { background: #D0F0FF; color: #0060A0; }
+.badge-done { background: #D8FFE8; color: #008040; }
+.badge-overdue { background: #FFE5E5; color: #D00; }
+.badge-review { background: #EEE5FF; color: #6020C0; }
+
+/* ===== PROGRESS BAR ===== */
+.progress-bar {
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+  width: 80px;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--ocean), var(--teal));
+  transition: width 0.3s;
+}
+
+/* ===== ACTION BUTTONS ===== */
+.action-btn {
+  padding: 5px 11px;
+  border-radius: 16px;
+  font-size: 11.5px;
+  cursor: pointer;
+  border: 1.5px solid;
+  font-family: 'Noto Sans TC', sans-serif;
+  transition: all 0.18s;
+  margin-right: 4px;
+}
+.action-btn.view { border-color: var(--ocean); color: var(--ocean); background: white; }
+.action-btn.view:hover { background: var(--ocean); color: white; }
+.action-btn.edit { border-color: var(--amber); color: #B56000; background: white; }
+.action-btn.edit:hover { background: var(--amber); color: white; }
+.action-btn.update { border-color: var(--teal); color: var(--teal); background: white; }
+.action-btn.update:hover { background: var(--teal); color: white; }
+.action-btn.del { border-color: var(--coral); color: var(--coral); background: white; }
+.action-btn.del:hover { background: var(--coral); color: white; }
+
+/* ===== TASK ID ===== */
+.task-id {
+  font-family: monospace;
+  font-size: 11px;
+  background: var(--mint);
+  color: var(--ocean);
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* ===== BUTTONS ===== */
+.btn {
+  padding: 9px 20px;
+  border-radius: 22px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  font-family: 'Noto Sans TC', sans-serif;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--ocean), var(--ocean-light));
+  color: white;
+  box-shadow: 0 4px 14px rgba(0,119,182,0.35);
+}
+.btn-primary:hover { box-shadow: 0 6px 20px rgba(0,119,182,0.45); transform: translateY(-1px); }
+.btn-teal {
+  background: linear-gradient(135deg, var(--teal), #00C9A0);
+  color: white;
+  box-shadow: 0 4px 14px rgba(0,200,160,0.3);
+}
+.btn-teal:hover { box-shadow: 0 6px 20px rgba(0,200,160,0.4); transform: translateY(-1px); }
+.btn-secondary {
+  background: var(--bg);
+  color: var(--text);
+  border: 1.5px solid var(--border);
+}
+.btn-secondary:hover { background: var(--border); }
+.btn-danger {
+  background: var(--coral);
+  color: white;
+}
+.btn-danger:hover { background: #e55; }
+
+/* ===== MODAL ===== */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(2,62,92,0.45);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modal-overlay.open { display: flex; }
+
+.modal {
+  background: var(--card);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 680px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,60,100,0.3);
+  animation: modalIn 0.25s ease;
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.94) translateY(20px); }
+  to { opacity: 1; transform: none; }
+}
+
+.modal-header {
+  background: linear-gradient(135deg, #023E5C, #0077B6);
+  color: white;
+  padding: 20px 24px 16px;
+  border-radius: 20px 20px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.modal-title { font-size: 17px; font-weight: 700; }
+.modal-close {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s;
+}
+.modal-close:hover { background: rgba(255,255,255,0.35); }
+
+.modal-body { padding: 24px; }
+.modal-footer {
+  padding: 16px 24px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  border-top: 1px solid var(--border);
+}
+
+/* ===== FORM ===== */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.form-group.full { grid-column: 1 / -1; }
+
+.form-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-light);
+}
+.required::after { content: ' *'; color: var(--coral); }
+
+.form-control {
+  padding: 9px 13px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 13.5px;
+  color: var(--text);
+  background: var(--bg);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  font-family: 'Noto Sans TC', sans-serif;
+  width: 100%;
+}
+.form-control:focus {
+  border-color: var(--ocean-light);
+  box-shadow: 0 0 0 3px rgba(0,180,216,0.15);
+}
+textarea.form-control { min-height: 80px; resize: vertical; }
+select.form-control { cursor: pointer; }
+
+/* ===== PRIORITY SELECTOR ===== */
+.priority-selector {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.priority-option {
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--border);
+  text-align: center;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.18s;
+}
+.priority-option:hover { transform: translateY(-2px); }
+.priority-option[data-p="urgent"] { color: #D00; }
+.priority-option[data-p="urgent"].selected { background: #FFE5E5; border-color: #D00; }
+.priority-option[data-p="high"] { color: #B56000; }
+.priority-option[data-p="high"].selected { background: #FFF0CC; border-color: #B56000; }
+.priority-option[data-p="normal"] { color: #0060A0; }
+.priority-option[data-p="normal"].selected { background: #D0F0FF; border-color: #0060A0; }
+.priority-option[data-p="low"] { color: #008040; }
+.priority-option[data-p="low"].selected { background: #D8FFE8; border-color: #008040; }
+
+/* ===== DETAIL VIEW ===== */
+.detail-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.detail-header-strip {
+  background: linear-gradient(135deg, #0077B6, #00B4D8);
+  padding: 20px 24px;
+  color: white;
+}
+.detail-body { padding: 24px; }
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.detail-item {}
+.detail-item-label {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--text-light);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.detail-item-value {
+  font-size: 14px;
+  color: var(--text);
+}
+
+/* ===== TIMELINE ===== */
+.timeline { margin-top: 20px; }
+.timeline-item {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 16px;
+  position: relative;
+}
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: 17px;
+  top: 36px;
+  bottom: -16px;
+  width: 2px;
+  background: var(--border);
+}
+.timeline-item:last-child::before { display: none; }
+.timeline-dot {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--ocean), var(--teal));
+  display: flex; align-items: center; justify-content: center;
+  color: white;
+  font-size: 14px;
+  flex-shrink: 0;
+  box-shadow: 0 3px 10px rgba(0,119,182,0.3);
+}
+.timeline-content {
+  flex: 1;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+}
+.timeline-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11.5px;
+  color: var(--text-light);
+  margin-bottom: 6px;
+}
+.timeline-text { font-size: 13.5px; }
+
+/* ===== PROGRESS UPDATE BOX ===== */
+.progress-update-box {
+  background: linear-gradient(135deg, #E8F7FF, #F5FDFF);
+  border: 1.5px solid var(--ocean-pale);
+  border-radius: var(--radius);
+  padding: 18px;
+  margin-top: 16px;
+}
+.progress-update-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ocean);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ===== PROGRESS SLIDER ===== */
+.progress-slider-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 12px 0;
+}
+.progress-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--border);
+  outline: none;
+}
+.progress-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--ocean), var(--teal));
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,119,182,0.4);
+}
+.progress-pct {
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--ocean);
+  min-width: 46px;
+  text-align: right;
+}
+
+/* ===== OVERDUE INDICATOR ===== */
+.overdue-flag {
+  color: var(--coral);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* ===== EMPTY STATE ===== */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-light);
+}
+.empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; }
+.empty-state p { font-size: 14px; }
+
+/* ===== TOAST ===== */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.toast {
+  background: linear-gradient(135deg, #023E5C, #0077B6);
+  color: white;
+  padding: 12px 18px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  box-shadow: 0 6px 24px rgba(0,60,100,0.35);
+  animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+  display: flex; align-items: center; gap: 8px;
+}
+.toast.success { background: linear-gradient(135deg, #006640, var(--lime)); }
+.toast.error { background: linear-gradient(135deg, #800, var(--coral)); }
+@keyframes slideIn { from { opacity:0; transform:translateX(60px); } to { opacity:1; transform:none; } }
+@keyframes fadeOut { from { opacity:1; } to { opacity:0; transform:translateX(60px); } }
+
+/* ===== SEARCH RESULT ===== */
+.search-result-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow);
+  border-left: 4px solid var(--ocean);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.search-result-card:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateX(4px);
+}
+
+/* ===== ASSIGNEE CHIPS ===== */
+.assignee-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+.assignee-chip {
+  background: var(--ocean-pale);
+  color: var(--ocean);
+  padding: 3px 9px;
+  border-radius: 10px;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+/* ===== DASHBOARD ALERT ===== */
+.alert-card {
+  background: linear-gradient(135deg, #FFF4CC, #FFFBE0);
+  border: 1.5px solid var(--amber);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  margin-bottom: 10px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+.alert-card:hover { background: #FFF0AA; }
+
+.alert-card.urgent {
+  background: linear-gradient(135deg, #FFE5E5, #FFF0F0);
+  border-color: var(--coral);
+}
+
+/* ===== TABS ===== */
+.tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--bg);
+  padding: 4px;
+  border-radius: 24px;
+  border: 1.5px solid var(--border);
+  margin-bottom: 20px;
+}
+.tab {
+  flex: 1;
+  padding: 8px 14px;
+  border-radius: 20px;
+  border: none;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 500;
+  color: var(--text-light);
+  background: transparent;
+  transition: all 0.2s;
+  text-align: center;
+}
+.tab.active {
+  background: linear-gradient(135deg, var(--ocean), var(--ocean-light));
+  color: white;
+  box-shadow: 0 3px 10px rgba(0,119,182,0.3);
+}
+
+/* ===== CHART BAR ===== */
+.mini-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 60px;
+  margin-top: 10px;
+}
+.mini-bar-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  height: 100%;
+  justify-content: flex-end;
+}
+.mini-bar {
+  width: 100%;
+  border-radius: 3px 3px 0 0;
+  background: linear-gradient(180deg, var(--ocean-light), var(--ocean));
+  min-height: 4px;
+}
+.mini-bar-label {
+  font-size: 10px;
+  color: var(--text-light);
+}
+
+/* ===== ID SEARCH MODAL ===== */
+.id-search-input {
+  font-size: 20px;
+  text-align: center;
+  font-family: monospace;
+  letter-spacing: 3px;
+  font-weight: 700;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .form-grid { grid-template-columns: 1fr; }
+  .detail-grid { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ===== LOGIN SCREEN ===== */
+#login-screen {
+  position: fixed; inset: 0;
+  background: linear-gradient(135deg, #023E5C 0%, #0077B6 50%, #00B4D8 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+.login-card {
+  background: white;
+  border-radius: 24px;
+  padding: 40px 44px;
+  width: 440px;
+  max-width: 95vw;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.3);
+  animation: modalIn 0.4s ease;
+}
+.login-logo {
+  display: flex; align-items: center; gap: 14px; justify-content: center;
+  margin-bottom: 24px;
+}
+.login-logo img { width: 60px; height: 60px; object-fit: contain; }
+.login-title { font-size: 20px; font-weight: 900; color: var(--text); text-align: center; }
+.login-sub { font-size: 13px; color: var(--text-light); text-align: center; margin-top: 4px; margin-bottom: 28px; }
+.login-btn {
+  width: 100%;
+  padding: 13px;
+  background: linear-gradient(135deg, var(--ocean), var(--ocean-light));
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Noto Sans TC', sans-serif;
+  transition: all 0.2s;
+  margin-top: 8px;
+}
+.login-btn:hover { box-shadow: 0 8px 24px rgba(0,119,182,0.4); transform: translateY(-2px); }
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%23D0EFF8' stroke='%230077B6' stroke-width='3'/%3E%3Cellipse cx='50' cy='50' rx='30' ry='20' fill='none' stroke='%230CB8A2' stroke-width='4' transform='rotate(-15 50 50)'/%3E%3Cellipse cx='50' cy='50' rx='18' ry='12' fill='%230CB8A2' transform='rotate(20 50 50)'/%3E%3Ccircle cx='42' cy='44' r='3' fill='white'/%3E%3C/svg%3E" alt="logo" id="login-logo-img">
+      <div>
+        <div style="font-size:18px;font-weight:900;color:#023E5C;">水試所業務交辦小助手</div>
+        <div style="font-size:11px;color:#4A7C9A;">農業部水產試驗所</div>
+      </div>
+    </div>
+    <div class="login-title">請選擇身份登入</div>
+    <div class="login-sub">選擇您所屬單位及姓名以進入系統</div>
+    <div class="form-group" style="margin-bottom:14px;">
+      <label class="form-label required">所屬單位</label>
+      <select class="form-control" id="login-dept" onchange="onLoginDeptChange()">
+        <option value="">-- 請選擇單位 --</option>
+      </select>
+    </div>
+    <div class="form-group" style="margin-bottom:20px;">
+      <label class="form-label required">姓名</label>
+      <select class="form-control" id="login-name">
+        <option value="">-- 請先選擇單位 --</option>
+      </select>
+    </div>
+    <div class="form-group" style="margin-bottom:20px;">
+      <label class="form-label">身份</label>
+      <select class="form-control" id="login-role">
+        <option value="assignee">承辦人員（接收/回報交辦）</option>
+        <option value="admin">交辦人（指派/管理任務）</option>
+      </select>
+    </div>
+    <button class="login-btn" onclick="doLogin()">🐟 進入系統</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" style="display:none;">
+
+<header>
+  <div class="header-left">
+    <div class="logo-circle">
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%23D0EFF8' stroke='%230077B6' stroke-width='3'/%3E%3Cellipse cx='50' cy='50' rx='30' ry='20' fill='none' stroke='%230CB8A2' stroke-width='4' transform='rotate(-15 50 50)'/%3E%3Cellipse cx='50' cy='50' rx='18' ry='12' fill='%230CB8A2' transform='rotate(20 50 50)'/%3E%3Ccircle cx='42' cy='44' r='3' fill='white'/%3E%3C/svg%3E" alt="logo">
+    </div>
+    <div class="sys-title">
+      水試所業務交辦小助手
+      <small>農業部水產試驗所 · Fisheries Research Institute</small>
+    </div>
+  </div>
+  <div class="header-right">
+    <button class="btn-header" onclick="openIdSearch()">🔍 ID查詢</button>
+    <div class="user-badge" onclick="logout()" title="點擊登出">
+      👤 <span id="header-user">-</span>
+    </div>
+    <button class="btn-header primary" onclick="openCreateModal()" id="btn-create-task">＋ 新增交辦</button>
+  </div>
+</header>
+
+<div class="app-wrapper">
+  <nav class="sidebar">
+    <div class="nav-section">
+      <div class="nav-label">主功能</div>
+      <div class="nav-item active" onclick="navigate('dashboard')">
+        <span class="nav-icon">📊</span> 儀表板
+      </div>
+      <div class="nav-item" onclick="navigate('tasks')">
+        <span class="nav-icon">📋</span> 所有交辦
+        <span class="nav-badge" id="nav-badge-all">0</span>
+      </div>
+      <div class="nav-item" onclick="navigate('my-tasks')">
+        <span class="nav-icon">👤</span> 我的交辦
+        <span class="nav-badge" id="nav-badge-my">0</span>
+      </div>
+      <div class="nav-item" onclick="navigate('overdue')">
+        <span class="nav-icon">⚠️</span> 逾期事項
+        <span class="nav-badge" id="nav-badge-overdue">0</span>
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">進度篩選</div>
+      <div class="nav-item" onclick="navigateStatus('pending')">
+        <span class="nav-icon">⏳</span> 待處理
+      </div>
+      <div class="nav-item" onclick="navigateStatus('inprogress')">
+        <span class="nav-icon">🔄</span> 進行中
+      </div>
+      <div class="nav-item" onclick="navigateStatus('review')">
+        <span class="nav-icon">🔍</span> 待審核
+      </div>
+      <div class="nav-item" onclick="navigateStatus('done')">
+        <span class="nav-icon">✅</span> 已完成
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">其他</div>
+      <div class="nav-item" onclick="navigate('stats')">
+        <span class="nav-icon">📈</span> 統計報表
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <!-- DASHBOARD PAGE -->
+    <div class="page active" id="page-dashboard">
+      <div class="section-header" style="margin-bottom:20px;">
+        <div class="section-title">儀表板總覽</div>
+        <div style="font-size:13px;color:var(--text-light);" id="dash-date"></div>
+      </div>
+
+      <div class="stats-grid" id="stats-grid"></div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px;">
+        <!-- Urgent/Overdue -->
+        <div>
+          <div class="section-header" style="margin-bottom:12px;">
+            <div class="section-title" style="font-size:15px;">🔴 緊急 / 逾期事項</div>
+          </div>
+          <div id="dash-alerts"></div>
+        </div>
+        <!-- Recent -->
+        <div>
+          <div class="section-header" style="margin-bottom:12px;">
+            <div class="section-title" style="font-size:15px;">🕐 近期新增交辦</div>
+          </div>
+          <div id="dash-recent"></div>
+        </div>
+      </div>
+
+      <!-- Progress chart -->
+      <div class="detail-card" style="margin-bottom:20px;">
+        <div style="padding:18px 20px;">
+          <div class="section-title" style="font-size:15px;margin-bottom:16px;">📊 各單位交辦數量</div>
+          <div id="dept-chart" style="display:flex;flex-wrap:wrap;gap:10px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TASKS PAGE -->
+    <div class="page" id="page-tasks">
+      <div class="section-header">
+        <div class="section-title" id="tasks-page-title">所有交辦事項</div>
+        <button class="btn btn-primary" onclick="openCreateModal()">＋ 新增交辦</button>
+      </div>
+
+      <div class="filter-bar">
+        <div class="search-box">
+          <span>🔍</span>
+          <input type="text" id="search-input" placeholder="搜尋任務名稱、ID、承辦人..." oninput="filterTasks()">
+        </div>
+        <div class="filter-group">
+          <select class="filter-select" id="filter-dept" onchange="filterTasks()">
+            <option value="">全部單位</option>
+          </select>
+          <select class="filter-select" id="filter-priority" onchange="filterTasks()">
+            <option value="">全部優先度</option>
+            <option value="urgent">🔴 緊急</option>
+            <option value="high">🟠 高</option>
+            <option value="normal">🔵 一般</option>
+            <option value="low">🟢 低</option>
+          </select>
+          <select class="filter-select" id="filter-status" onchange="filterTasks()">
+            <option value="">全部狀態</option>
+            <option value="pending">待處理</option>
+            <option value="inprogress">進行中</option>
+            <option value="review">待審核</option>
+            <option value="done">已完成</option>
+            <option value="overdue">逾期</option>
+          </select>
+        </div>
+        <div style="font-size:12px;color:var(--text-light);" id="task-count-display"></div>
+      </div>
+
+      <div class="task-table-wrapper">
+        <table class="task-table">
+          <thead>
+            <tr>
+              <th>任務ID</th>
+              <th>交辦名稱</th>
+              <th>承辦單位/人員</th>
+              <th>重要性</th>
+              <th>交辦日期</th>
+              <th>預定完成</th>
+              <th>進度</th>
+              <th>狀態</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="task-tbody"></tbody>
+        </table>
+        <div id="task-empty" class="empty-state" style="display:none;">
+          <div class="empty-icon">🐠</div>
+          <p>目前沒有符合條件的交辦事項</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- MY TASKS PAGE -->
+    <div class="page" id="page-my-tasks">
+      <div class="section-header">
+        <div class="section-title">我的交辦事項</div>
+      </div>
+      <div class="task-table-wrapper">
+        <table class="task-table">
+          <thead>
+            <tr>
+              <th>任務ID</th>
+              <th>交辦名稱</th>
+              <th>重要性</th>
+              <th>交辦日期</th>
+              <th>預定完成</th>
+              <th>進度</th>
+              <th>狀態</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="my-task-tbody"></tbody>
+        </table>
+        <div id="my-task-empty" class="empty-state" style="display:none;">
+          <div class="empty-icon">🎣</div>
+          <p>目前沒有指派給您的交辦事項</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- OVERDUE PAGE -->
+    <div class="page" id="page-overdue">
+      <div class="section-header">
+        <div class="section-title">⚠️ 逾期交辦事項</div>
+      </div>
+      <div class="task-table-wrapper">
+        <table class="task-table">
+          <thead>
+            <tr>
+              <th>任務ID</th>
+              <th>交辦名稱</th>
+              <th>承辦單位/人員</th>
+              <th>重要性</th>
+              <th>預定完成</th>
+              <th>逾期天數</th>
+              <th>進度</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="overdue-tbody"></tbody>
+        </table>
+        <div id="overdue-empty" class="empty-state" style="display:none;">
+          <div class="empty-icon">🎉</div>
+          <p>太棒了！目前沒有逾期事項</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- STATS PAGE -->
+    <div class="page" id="page-stats">
+      <div class="section-header">
+        <div class="section-title">📈 統計報表</div>
+      </div>
+      <div id="stats-content"></div>
+    </div>
+
+  </main>
+</div>
+</div>
+
+<!-- CREATE/EDIT TASK MODAL -->
+<div class="modal-overlay" id="modal-task">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-task-title">新增交辦事項</div>
+      <button class="modal-close" onclick="closeModal('modal-task')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group full">
+          <label class="form-label required">交辦名稱</label>
+          <input type="text" class="form-control" id="f-name" placeholder="請輸入交辦事項名稱">
+        </div>
+        <div class="form-group">
+          <label class="form-label required">承辦單位</label>
+          <select class="form-control" id="f-dept" onchange="onFormDeptChange()">
+            <option value="">-- 請選擇單位 --</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label required">承辦人員（可多選）</label>
+          <select class="form-control" id="f-assignee" multiple size="4">
+          </select>
+          <span style="font-size:11px;color:var(--text-light);">按住 Ctrl/Cmd 可多選</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label required">交辦日期</label>
+          <input type="date" class="form-control" id="f-start">
+        </div>
+        <div class="form-group">
+          <label class="form-label required">預定完成日期</label>
+          <input type="date" class="form-control" id="f-end">
+        </div>
+        <div class="form-group full">
+          <label class="form-label required">重要程度</label>
+          <div class="priority-selector">
+            <div class="priority-option" data-p="urgent" onclick="selectPriority('urgent')">🔴 緊急</div>
+            <div class="priority-option" data-p="high" onclick="selectPriority('high')">🟠 高</div>
+            <div class="priority-option selected" data-p="normal" onclick="selectPriority('normal')">🔵 一般</div>
+            <div class="priority-option" data-p="low" onclick="selectPriority('low')">🟢 低</div>
+          </div>
+        </div>
+        <div class="form-group full">
+          <label class="form-label">工作內容摘要</label>
+          <textarea class="form-control" id="f-desc" placeholder="請輸入交辦工作內容說明..."></textarea>
+        </div>
+        <div class="form-group full">
+          <label class="form-label">相關附件/備註</label>
+          <input type="text" class="form-control" id="f-note" placeholder="附件名稱或備註說明">
+        </div>
+        <div class="form-group">
+          <label class="form-label">通知電子郵件</label>
+          <select class="form-control" id="f-notify">
+            <option value="yes">✉️ 發送通知信</option>
+            <option value="no">不通知</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">提醒日期（距截止前）</label>
+          <select class="form-control" id="f-remind">
+            <option value="3">3天前提醒</option>
+            <option value="5">5天前提醒</option>
+            <option value="7">7天前提醒</option>
+            <option value="14">14天前提醒</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-task')">取消</button>
+      <button class="btn btn-primary" onclick="saveTask()">💾 儲存交辦</button>
+    </div>
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="modal-detail">
+  <div class="modal" style="max-width:720px;">
+    <div class="modal-header">
+      <div>
+        <div style="font-size:11px;opacity:0.75;margin-bottom:3px;">任務詳情</div>
+        <div class="modal-title" id="detail-modal-title">-</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('modal-detail')">✕</button>
+    </div>
+    <div class="modal-body" id="detail-modal-body"></div>
+    <div class="modal-footer" id="detail-modal-footer"></div>
+  </div>
+</div>
+
+<!-- PROGRESS UPDATE MODAL -->
+<div class="modal-overlay" id="modal-progress">
+  <div class="modal" style="max-width:520px;">
+    <div class="modal-header">
+      <div class="modal-title">📝 回報執行進度</div>
+      <button class="modal-close" onclick="closeModal('modal-progress')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:16px;" id="prog-task-name"></div>
+      <div class="form-group" style="margin-bottom:14px;">
+        <label class="form-label required">完成百分比</label>
+        <div class="progress-slider-wrapper">
+          <input type="range" class="progress-slider" id="prog-slider" min="0" max="100" step="5" value="0" oninput="updateSliderDisplay()">
+          <div class="progress-pct" id="prog-pct-display">0%</div>
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:14px;">
+        <label class="form-label required">狀態更新</label>
+        <select class="form-control" id="prog-status">
+          <option value="pending">待處理</option>
+          <option value="inprogress">進行中</option>
+          <option value="review">待審核（完成，送審）</option>
+          <option value="done">已完成</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label required">進度說明</label>
+        <textarea class="form-control" id="prog-note" placeholder="請說明目前執行進度、遭遇問題或完成情形..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-progress')">取消</button>
+      <button class="btn btn-teal" onclick="saveProgress()">✅ 提交進度</button>
+    </div>
+  </div>
+</div>
+
+<!-- ID SEARCH MODAL -->
+<div class="modal-overlay" id="modal-id-search">
+  <div class="modal" style="max-width:460px;">
+    <div class="modal-header">
+      <div class="modal-title">🔍 任務ID查詢</div>
+      <button class="modal-close" onclick="closeModal('modal-id-search')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group" style="margin-bottom:20px;">
+        <label class="form-label">輸入任務ID（如：FRI-2024-001）</label>
+        <input type="text" class="form-control id-search-input" id="id-search-val" placeholder="FRI-xxxx-xxx" oninput="this.value=this.value.toUpperCase()">
+      </div>
+      <button class="btn btn-primary" onclick="searchById()" style="width:100%;justify-content:center;">🔍 查詢</button>
+      <div id="id-search-result" style="margin-top:16px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+// =============================
+// STAFF DATA
+// =============================
+const STAFF = {
+  '長官及行政單位': {
+    '所長室': [{n:'張錦宜',e:'cichang@mail.tfrin.gov.tw'},{n:'黃嬿諭',e:'y-y.huang@mail.tfrin.gov.tw'}],
+    '副所長室': [{n:'葉信明',e:'hmyeh@mail.tfrin.gov.tw'},{n:'胡秀雯',e:'hwhu@mail.tfrin.gov.tw'}],
+    '主任秘書室': [{n:'曾振德',e:'cttseng@mail.tfrin.gov.tw'},{n:'詹麗萍',e:'lpchan@mail.tfrin.gov.tw'}],
+    '秘書室': [{n:'許復盛',e:'fshsu@mail.tfrin.gov.tw'},{n:'郝再隆',e:'jlhau@mail.tfrin.gov.tw'},{n:'水試所總收發',e:'frigm@mail.tfrin.gov.tw'},{n:'林佳琪',e:'cclin01@mail.tfrin.gov.tw'},{n:'謝妙恂',e:'mhhsieh@mail.tfrin.gov.tw'},{n:'楊珮芬',e:'pfyang@mail.tfrin.gov.tw'},{n:'陳奕森',e:'yschen@mail.tfrin.gov.tw'},{n:'張麗芳',e:'lfchang@mail.tfrin.gov.tw'},{n:'許履安',e:'lasheu@mail.tfrin.gov.tw'},{n:'黃麗君',e:'lchuang@mail.tfrin.gov.tw'},{n:'曾美鳳',e:'mftseng@mail.tfrin.gov.tw'},{n:'江貞憲',e:'chchiang@mail.tfrin.gov.tw'},{n:'袁淑玲',e:'slyuan@mail.tfrin.gov.tw'},{n:'林怡利',e:'yllin@mail.tfrin.gov.tw'},{n:'簡羿萱',e:'yhchien@mail.tfrin.gov.tw'},{n:'莊鈞惟',e:'jwzhuang@mail.tfrin.gov.tw'},{n:'黃渼純',e:'mchuang@mail.tfrin.gov.tw'},{n:'彭淑馨',e:'sspeng@mail.tfrin.gov.tw'},{n:'蕭汎汝',e:'fjhsiao@mail.tfrin.gov.tw'},{n:'楊晶齡',e:'jlyang@mail.tfrin.gov.tw'},{n:'梁詩涵',e:'shliang@mail.tfrin.gov.tw'},{n:'李宜安',e:'yalee@mail.tfrin.gov.tw'},{n:'廖柏鈞',e:'pcliao@mail.tfrin.gov.tw'},{n:'蔡良瑩',e:'acc5@mail.tfrin.gov.tw'},{n:'何淑真',e:'scho02@mail.tfrin.gov.tw'}],
+    '人事室': [{n:'江瑜萍',e:'ypjiang@mail.tfrin.gov.tw'},{n:'高子嵐',e:'tlkao@mail.tfrin.gov.tw'},{n:'杜玉冬',e:'yttu@mail.tfrin.gov.tw'},{n:'張芷瑋',e:'jwchang@mail.tfrin.gov.tw'},{n:'張絜婷',e:'jtzhang@mail.tfrin.gov.tw'},{n:'楊逸筠',e:'iyyang@mail.tfrin.gov.tw'}],
+    '主計室': [{n:'潘富生',e:'fspan@mail.tfrin.gov.tw'},{n:'林紓玉',e:'sylin@mail.tfrin.gov.tw'},{n:'戴文英',e:'wytai@mail.tfrin.gov.tw'},{n:'周麗卿',e:'acc3@mail.tfrin.gov.tw'},{n:'戴玉滿',e:'ymtai@mail.tfrin.gov.tw'},{n:'阮志中',e:'jjruan@mail.tfrin.gov.tw'},{n:'楊証丞',e:'zcyang@mail.tfrin.gov.tw'}],
+    '政風室': [{n:'張俊換',e:'chchang04@mail.tfrin.gov.tw'},{n:'陳柑伶',e:'glchen@mail.tfrin.gov.tw'}],
+  },
+  '研究單位': {
+    '水產養殖組': [{n:'黃美瑩',e:'myhuang@mail.tfrin.gov.tw'},{n:'謝依靜',e:'yjxie@mail.tfrin.gov.tw'},{n:'官琇瑩',e:'hykuan@mail.tfrin.gov.tw'},{n:'吳嘉哲',e:'ccwu02@mail.tfrin.gov.tw'},{n:'潘泰安',e:'tapan@mail.tfrin.gov.tw'},{n:'朱惠真',e:'hjju@mail.tfrin.gov.tw'},{n:'杜金蓮',e:'jldu@mail.tfrin.gov.tw'},{n:'林玠如',e:'cjlin@mail.tfrin.gov.tw'},{n:'黃慶輝',e:'chhuang02@mail.tfrin.gov.tw'},{n:'黃淑敏',e:'smhuang@mail.tfrin.gov.tw'},{n:'金映玥',e:'yychin@mail.tfrin.gov.tw'},{n:'陳凱琳',e:'klchen@mail.tfrin.gov.tw'},{n:'洪煜翔',e:'yxhung@mail.tfrin.gov.tw'},{n:'陳彥伶',e:'ylchen01@mail.tfrin.gov.tw'},{n:'楊堉維',e:'ywyang@mail.tfrin.gov.tw'},{n:'楊清閔',e:'cmyang@mail.tfrin.gov.tw'},{n:'周洪鑫',e:'hhchou@mail.tfrin.gov.tw'},{n:'郭鎂慧',e:'mhkuo@mail.tfrin.gov.tw'}],
+    '海洋漁業組': [{n:'張可揚',e:'kychang@mail.tfrin.gov.tw'},{n:'蔡佩璇',e:'phtsai01@mail.tfrin.gov.tw'},{n:'劉國強',e:'kcliu@mail.tfrin.gov.tw'},{n:'蕭聖代',e:'sthsiao@mail.tfrin.gov.tw'},{n:'莊世昌',e:'scchuang@mail.tfrin.gov.tw'},{n:'潘佳怡',e:'cjpan@mail.tfrin.gov.tw'},{n:'曾秀茹',e:'srtseng@mail.tfrin.gov.tw'},{n:'李堂炯',e:'tjli@mail.tfrin.gov.tw'},{n:'陳均龍',e:'jlchen@mail.tfrin.gov.tw'},{n:'吳允暉',e:'yhwu@mail.tfrin.gov.tw'},{n:'金建邦',e:'cpchin@mail.tfrin.gov.tw'},{n:'陳人裕',e:'rychanu@mail.tfrin.gov.tw'},{n:'茬家續',e:'chchih@mail.tfrin.gov.tw'},{n:'羅方君',e:'fjluo@mail.tfrin.gov.tw'},{n:'張海龍',e:'hlchang@mail.tfrin.gov.tw'},{n:'嚴國維',e:'kwyen@mail.tfrin.gov.tw'},{n:'黃鼎傑',e:'tchuang@mail.tfrin.gov.tw'},{n:'張芸甄',e:'ycchang01@mail.tfrin.gov.tw'},{n:'葉欣柔',e:'hjyeh@mail.tfrin.gov.tw'},{n:'李茂熒',e:'mylee@mail.tfrin.gov.tw'},{n:'蔡孟昌',e:'mctsai@mail.tfrin.gov.tw'},{n:'林以芯',e:'yxlin@mail.tfrin.gov.tw'},{n:'陳香蓉',e:'hjchen@mail.tfrin.gov.tw'},{n:'胡家維',e:'cwhu01@mail.tfrin.gov.tw'},{n:'丁一',e:'iting@mail.tfrin.gov.tw'},{n:'簡進財',e:'ctchin@mail.tfrin.gov.tw'},{n:'柯慧玲',e:'hlko@mail.tfrin.gov.tw'},{n:'喻倚蓉',e:'yryu@mail.tfrin.gov.tw'},{n:'林翰揚',e:'hylin@mail.tfrin.gov.tw'},{n:'張瑋珍',e:'wcchang@mail.tfrin.gov.tw'},{n:'陳春美',e:'cmchen@mail.tfrin.gov.tw'},{n:'陳律祺',e:'lcchen@mail.tfrin.gov.tw'},{n:'陳正達',e:'jdchen@mail.tfrin.gov.tw'},{n:'陳琬琪',e:'wcchen03@mail.tfrin.gov.tw'},{n:'陳彥賓',e:'ybchen@mail.tfrin.gov.tw'},{n:'黃謙',e:'chuang01@mail.tfrin.gov.tw'}],
+    '技術服務組': [{n:'蔡惠萍',e:'hptsai@mail.tfrin.gov.tw'},{n:'鄭淇尹',e:'cycheng@mail.tfrin.gov.tw'},{n:'陳高松',e:'kschen@mail.tfrin.gov.tw'},{n:'李周陵',e:'jllee@mail.tfrin.gov.tw'},{n:'吳美錚',e:'mcwu@mail.tfrin.gov.tw'},{n:'林志遠',e:'cylin@mail.tfrin.gov.tw'},{n:'陳威克',e:'wkchen@mail.tfrin.gov.tw'},{n:'郭恆如',e:'hrguo@mail.tfrin.gov.tw'},{n:'宋嘉軒',e:'chsung@mail.tfrin.gov.tw'},{n:'何欣珏',e:'scho@mail.tfrin.gov.tw'},{n:'林芳安',e:'falin@mail.tfrin.gov.tw'},{n:'王郁峻',e:'ycwang@mail.tfrin.gov.tw'},{n:'趙鐿涵',e:'yhchao@mail.tfrin.gov.tw'},{n:'顏綵葭',e:'cjyen@mail.tfrin.gov.tw'},{n:'劉呈威',e:'cwliu@mail.tfrin.gov.tw'},{n:'劉玉琳',e:'ylliu@mail.tfrin.gov.tw'},{n:'童王筠',e:'wytong@mail.tfrin.gov.tw'},{n:'陳慧君',e:'hcchen@mail.tfrin.gov.tw'},{n:'劉亭',e:'tliu@mail.tfrin.gov.tw'}],
+    '水產加工組': [{n:'蔡慧君',e:'hjchai@mail.tfrin.gov.tw'},{n:'高瑜鎂',e:'ymkao@mail.tfrin.gov.tw'},{n:'潘宜庭',e:'ytpan@mail.tfrin.gov.tw'},{n:'郭柏昇',e:'pskuo@mail.tfrin.gov.tw'},{n:'葉駿達',e:'ctyeh@mail.tfrin.gov.tw'},{n:'易琮凱',e:'tkyi@mail.tfrin.gov.tw'},{n:'高堂穎',e:'tykao@mail.tfrin.gov.tw'},{n:'張晏瑋',e:'ywchang@mail.tfrin.gov.tw'},{n:'杜明杰',e:'mctu@mail.tfrin.gov.tw'},{n:'林禹承',e:'yclin06@mail.tfrin.gov.tw'},{n:'陳文君',e:'wcchen@mail.tfrin.gov.tw'},{n:'高翊峰',e:'yfkao@mail.tfrin.gov.tw'},{n:'何晟瑩',e:'lpho@mail.tfrin.gov.tw'},{n:'歐秀美',e:'hmou@mail.tfrin.gov.tw'},{n:'杜中菁',e:'cctu@mail.tfrin.gov.tw'},{n:'洪祥瑀',e:'hyhung@mail.tfrin.gov.tw'},{n:'彭鈺婷',e:'ytpeng@mail.tfrin.gov.tw'},{n:'吳依玲',e:'ylwu@mail.tfrin.gov.tw'},{n:'張曜鵬',e:'ypzhang@mail.tfrin.gov.tw'},{n:'林鈺哲',e:'yclin09@mail.tfrin.gov.tw'}],
+  },
+  '分中心': {
+    '淡水養殖研究中心': [{n:'楊順德',e:'sdyang@mail.tfrin.gov.tw'},{n:'莊凱婷',e:'ktchuang@mail.tfrin.gov.tw'},{n:'黃德威',e:'dwhuang@mail.tfrin.gov.tw'},{n:'康明珠',e:'mckang@mail.tfrin.gov.tw'},{n:'劉恩良',e:'ellau@mail.tfrin.gov.tw'},{n:'蘇慧敏',e:'hmsu01@mail.tfrin.gov.tw'},{n:'王俐文',e:'lwwang@mail.tfrin.gov.tw'},{n:'張凱傑',e:'kcchang@mail.tfrin.gov.tw'},{n:'陳永欣',e:'yhchen01@mail.tfrin.gov.tw'},{n:'黃麗玲',e:'llhuang@mail.tfrin.gov.tw'},{n:'陳榮華',e:'rhchen@mail.tfrin.gov.tw'},{n:'蕭玉晨',e:'ychsiao@mail.tfrin.gov.tw'},{n:'陳冠如',e:'grchen@mail.tfrin.gov.tw'},{n:'陳念慈',e:'ncchen@mail.tfrin.gov.tw'},{n:'陳建彰',e:'ccchen01@mail.tfrin.gov.tw'},{n:'黃瀛生',e:'yshuang01@mail.tfrin.gov.tw'},{n:'陳雅亭',e:'ytchen01@mail.tfrin.gov.tw'},{n:'陳雨農',e:'ynchen@mail.tfrin.gov.tw'},{n:'楊碧雪',e:'bxyang@mail.tfrin.gov.tw'},{n:'李曜辰',e:'yclee@mail.tfrin.gov.tw'},{n:'謝豐群',e:'fchsieh@mail.tfrin.gov.tw'},{n:'劉姵妏',e:'pwliu@mail.tfrin.gov.tw'},{n:'梁晏甄',e:'ycliang@mail.tfrin.gov.tw'},{n:'邱詠傑',e:'ycchiu01@mail.tfrin.gov.tw'}],
+    '海水養殖研究中心': [{n:'朱永桐',e:'ytchu@mail.tfrin.gov.tw'},{n:'陳惠姿',e:'htchen@mail.tfrin.gov.tw'},{n:'吳育甄',e:'ycwu@mail.tfrin.gov.tw'},{n:'林峰右',e:'fylin@mail.tfrin.gov.tw'},{n:'郭科良',e:'klkuo@mail.tfrin.gov.tw'},{n:'陳又甄',e:'yjchen@mail.tfrin.gov.tw'},{n:'黃國彰',e:'kchuang@mail.tfrin.gov.tw'},{n:'鄭鴻輝',e:'hhcheng@mail.tfrin.gov.tw'},{n:'邱靜山',e:'cschiu@mail.tfrin.gov.tw'},{n:'胡益順',e:'yishu@mail.tfrin.gov.tw'},{n:'謝淑秋',e:'schsieh@mail.tfrin.gov.tw'},{n:'張秉宏',e:'phchang@mail.tfrin.gov.tw'},{n:'黃玟霜',e:'wshuang@mail.tfrin.gov.tw'},{n:'邱沛盛',e:'pschiu@mail.tfrin.gov.tw'},{n:'陳建智',e:'ccchen02@mail.tfrin.gov.tw'},{n:'張素容',e:'sjchang@mail.tfrin.gov.tw'},{n:'劉于溶',e:'yjliu@mail.tfrin.gov.tw'},{n:'黃致中',e:'jjhuang@mail.tfrin.gov.tw'},{n:'邱允志',e:'ycchiu@mail.tfrin.gov.tw'},{n:'傅怡禎',e:'yzfu@mail.tfrin.gov.tw'},{n:'薛守志',e:'schsueh@mail.tfrin.gov.tw'},{n:'余冠霖',e:'klyu@mail.tfrin.gov.tw'},{n:'許益誠',e:'ychsu@mail.tfrin.gov.tw'},{n:'黃煒翔',e:'whhuang@mail.tfrin.gov.tw'},{n:'林志訓',e:'chlin01@mail.tfrin.gov.tw'}],
+    '沿近海漁業生物研究中心': [{n:'翁進興',e:'j-s.ueng@mail.tfrin.gov.tw'},{n:'潘惠婉',e:'hwpan@mail.tfrin.gov.tw'},{n:'藍揚麒',e:'yclan@mail.tfrin.gov.tw'},{n:'張麗美',e:'lmchang@mail.tfrin.gov.tw'},{n:'黃建智',e:'jzhuang@mail.tfrin.gov.tw'},{n:'賴繼昌',e:'cclai@mail.tfrin.gov.tw'},{n:'陳郁凱',e:'ykchen@mail.tfrin.gov.tw'},{n:'何珈欣',e:'jshe@mail.tfrin.gov.tw'},{n:'黃星翰',e:'hhhuang@mail.tfrin.gov.tw'},{n:'賴蓉葦',e:'rwlai@mail.tfrin.gov.tw'},{n:'楊紹弘',e:'shyang@mail.tfrin.gov.tw'},{n:'林冠宏',e:'ghlin@mail.tfrin.gov.tw'},{n:'陳秋月',e:'cychen2@mail.tfrin.gov.tw'},{n:'吳伊淑',e:'yswu@mail.tfrin.gov.tw'},{n:'張致銜',e:'chchang@mail.tfrin.gov.tw'},{n:'黃世龍',e:'slhaumg@mail.tfrin.gov.tw'},{n:'王銘言',e:'mywang@mail.tfrin.gov.tw'},{n:'陳明展',e:'mjchern@mail.tfrin.gov.tw'},{n:'蔡宏義',e:'hytsay@mail.tfrin.gov.tw'},{n:'蔡安傑',e:'ajtsay@mail.tfrin.gov.tw'},{n:'蔡明益',e:'mytsay@mail.tfrin.gov.tw'},{n:'趙仲昆',e:'nkhsiu@mail.tfrin.gov.tw'},{n:'李垟呏',e:'yllee01@mail.tfrin.gov.tw'},{n:'許益銘',e:'imhsu@mail.tfrin.gov.tw'},{n:'林堉琪',e:'yclin04@mail.tfrin.gov.tw'},{n:'鄭力綺',e:'lccheng@mail.tfrin.gov.tw'},{n:'劉仁睦',e:'jmliu@mail.tfrin.gov.tw'},{n:'徐華遜',e:'hhhsu@mail.tfrin.gov.tw'},{n:'吳浩祥',e:'hswu@mail.tfrin.gov.tw'},{n:'楊錦樺',e:'jhyang@mail.tfrin.gov.tw'}],
+    '東港養殖研究中心': [{n:'吳豐成',e:'fcwu@mail.tfrin.gov.tw'},{n:'陳麗鴦',e:'ly.chen@mail.tfrin.gov.tw'},{n:'陳昶秀',e:'ch.chen@mail.tfrin.gov.tw'},{n:'洪彩敏',e:'tmhomg@mail.tfrin.gov.tw'},{n:'陳陽德',e:'ydchen@mail.tfrin.gov.tw'},{n:'李彥宏',e:'yhlee@mail.tfrin.gov.tw'},{n:'楊明樺',e:'mhyang@mail.tfrin.gov.tw'},{n:'許月娥',e:'yohsu@mail.tfrin.gov.tw'},{n:'賴哲翊',e:'jylai@mail.tfrin.gov.tw'},{n:'林武得',e:'wdlin@mail.tfrin.gov.tw'},{n:'黃維能',e:'wnhuang@mail.tfrin.gov.tw'},{n:'余淑楓',e:'sfyu@mail.tfrin.gov.tw'},{n:'周芷儀',e:'cychou@mail.tfrin.gov.tw'},{n:'葉怡均',e:'ycyeh@mail.tfrin.gov.tw'},{n:'許自研',e:'zyxu@mail.tfrin.gov.tw'},{n:'胡峻瑋',e:'cwhu@mail.tfrin.gov.tw'},{n:'陳文振',e:'wjchen@mail.tfrin.gov.tw'},{n:'劉宥均',e:'ycliu@mail.tfrin.gov.tw'},{n:'王淑欣',e:'shwang@mail.tfrin.gov.tw'},{n:'王鐘慶',e:'zqwang@mail.tfrin.gov.tw'},{n:'蘇皇銘',e:'hmsu02@mail.tfrin.gov.tw'},{n:'利淑如',e:'sjli@mail.tfrin.gov.tw'},{n:'鄭博仁',e:'brjheng@mail.tfrin.gov.tw'},{n:'陳俊安',e:'cachen@mail.tfrin.gov.tw'},{n:'林如謙',e:'jclin@mail.tfrin.gov.tw'},{n:'洪崑龍',e:'klhong@mail.tfrin.gov.tw'},{n:'周子逸',e:'zychou@mail.tfrin.gov.tw'},{n:'陳盈達',e:'ytchen02@mail.tfrin.gov.tw'},{n:'蘇義哲',e:'ycsu@mail.tfrin.gov.tw'},{n:'林志祐',e:'jylin01@mail.tfrin.gov.tw'},{n:'張軒銘',e:'hmchang@mail.tfrin.gov.tw'},{n:'蔡欣諫',e:'hctsai@mail.tfrin.gov.tw'},{n:'杜信旻',e:'hmtu@mail.tfrin.gov.tw'},{n:'翁識博',e:'spweng@mail.tfrin.gov.tw'},{n:'李奕昀',e:'yylee@mail.tfrin.gov.tw'},{n:'柯思羽',e:'syke@mail.tfrin.gov.tw'},{n:'郭秋慧',e:'chkuo@mail.tfrin.gov.tw'}],
+    '東部漁業生物研究中心': [{n:'江偉全',e:'wcchiang@mail.tfrin.gov.tw'},{n:'蔡碧玲',e:'bltsai@mail.tfrin.gov.tw'},{n:'許儷玉',e:'lyhsu@mail.tfrin.gov.tw'},{n:'李沛珊',e:'pslee@mail.tfrin.gov.tw'},{n:'吳瑞賢',e:'jhwu@mail.tfrin.gov.tw'},{n:'鄭明忠',e:'mjcheng@mail.tfrin.gov.tw'},{n:'周爰鎮',e:'ytchou@mail.tfrin.gov.tw'},{n:'陳鏗元',e:'kychen@mail.tfrin.gov.tw'},{n:'黃侑勖',e:'yshuang@mail.tfrin.gov.tw'},{n:'江玉瑛',e:'yyjiang@mail.tfrin.gov.tw'},{n:'陳玉萍',e:'ypchen@mail.tfrin.gov.tw'},{n:'張景淳',e:'ctchang@mail.tfrin.gov.tw'},{n:'黃君毅',e:'jyhuang@mail.tfrin.gov.tw'},{n:'董家宏',e:'jhdong@mail.tfrin.gov.tw'},{n:'許紅虹',e:'hhshu@mail.tfrin.gov.tw'},{n:'李任棋',e:'hclee@mail.tfrin.gov.tw'},{n:'邱俊豪',e:'jhchiou@mail.tfrin.gov.tw'},{n:'林憲忠',e:'sjlin@mail.tfrin.gov.tw'},{n:'邱燕華',e:'yhchiu@mail.tfrin.gov.tw'},{n:'李國瑋',e:'gwlee@mail.tfrin.gov.tw'},{n:'陳重元',e:'cychen03@mail.tfrin.gov.tw'},{n:'田伶任',e:'ljtien@mail.tfrin.gov.tw'},{n:'范氏碧',e:'spfan@mail.tfrin.gov.tw'},{n:'蔡美滿',e:'mmtsai@mail.tfrin.gov.tw'},{n:'陳正發',e:'cfchen@mail.tfrin.gov.tw'},{n:'許嘉閔',e:'cmhsu@mail.tfrin.gov.tw'},{n:'楊一男',e:'ynyang@mail.tfrin.gov.tw'},{n:'高丁振傑',e:'jjkao@mail.tfrin.gov.tw'}],
+    '澎湖漁業生物研究中心': [{n:'城振誠',e:'cccheng@mail.tfrin.gov.tw'},{n:'謝恆毅',e:'hernyi@mail.tfrin.gov.tw'},{n:'陳麗瑩',e:'lychen01@mail.tfrin.gov.tw'},{n:'張戴陽',e:'tychang@mail.tfrin.gov.tw'},{n:'歐啟明',e:'cmou@mail.tfrin.gov.tw'},{n:'邱韻霖',e:'ylchiu@mail.tfrin.gov.tw'},{n:'劉再豐',e:'tfliou@mail.tfrin.gov.tw'},{n:'蔡忠和',e:'chtsai@mail.tfrin.gov.tw'},{n:'陳仁偉',e:'jwchen@mail.tfrin.gov.tw'},{n:'廖紫嬿',e:'tyliao@mail.tfrin.gov.tw'},{n:'許雅筑',e:'yzxu@mail.tfrin.gov.tw'},{n:'林慧秋',e:'hclin@mail.tfrin.gov.tw'},{n:'陳東本',e:'tpchen@mail.tfrin.gov.tw'},{n:'郭彭',e:'pkuo@mail.tfrin.gov.tw'},{n:'陳彥愷',e:'ykchen01@mail.tfrin.gov.tw'},{n:'呂逸林',e:'yllu@mail.tfrin.gov.tw'},{n:'許鐘鋼',e:'ckhsu@mail.tfrin.gov.tw'},{n:'吳玉霞',e:'yhwu01@mail.tfrin.gov.tw'},{n:'劉素華',e:'shliu@mail.tfrin.gov.tw'},{n:'鄭靜怡',e:'cycheng01@mail.tfrin.gov.tw'},{n:'林绣美',e:'hmlin@mail.tfrin.gov.tw'},{n:'許秀媛',e:'hyhsu@mail.tfrin.gov.tw'},{n:'黃志弘',e:'chhuang01@mail.tfrin.gov.tw'},{n:'陳其欽',e:'ccchen@mail.tfrin.gov.tw'},{n:'陳岳川',e:'ycchen@mail.tfrin.gov.tw'},{n:'冼宜樂',e:'ylshen@mail.tfrin.gov.tw'},{n:'葉宇庭',e:'ytyeh@mail.tfrin.gov.tw'},{n:'許思婕',e:'schsu@mail.tfrin.gov.tw'},{n:'莊美英',e:'myzhuang@mail.tfrin.gov.tw'},{n:'劉高文',e:'gwliu@mail.tfrin.gov.tw'},{n:'董欣婷',e:'httung@mail.tfrin.gov.tw'},{n:'楊子泰',e:'jtyang@mail.tfrin.gov.tw'},{n:'歐麗榛',e:'lcou@mail.tfrin.gov.tw'},{n:'黃信仁',e:'xrhuang@mail.tfrin.gov.tw'},{n:'陳久林',e:'clchen@mail.tfrin.gov.tw'},{n:'林育助',e:'yclin05@mail.tfrin.gov.tw'},{n:'劉祐瑜',e:'yyliu@mail.tfrin.gov.tw'},{n:'顏玉婷',e:'ytyang@mail.tfrin.gov.tw'},{n:'鐘冠翔',e:'khchung@mail.tfrin.gov.tw'},{n:'鄭之瑀',e:'jyjheng@mail.tfrin.gov.tw'},{n:'陳瑞谷',e:'rgchen@mail.tfrin.gov.tw'},{n:'顏向鴻',e:'shyan@mail.tfrin.gov.tw'},{n:'謝易叡',e:'yjhsieh@mail.tfrin.gov.tw'},{n:'李政毅',e:'zyli@mail.tfrin.gov.tw'},{n:'蘇柏維',e:'pwsu@mail.tfrin.gov.tw'},{n:'楊松儒',e:'sjyang@mail.tfrin.gov.tw'},{n:'林連蒂',e:'ldlin@mail.tfrin.gov.tw'},{n:'林子翔',e:'thlin@mail.tfrin.gov.tw'},{n:'許明如',e:'mrxu@mail.tfrin.gov.tw'},{n:'何寛昊',e:'khho@mail.tfrin.gov.tw'},{n:'張庭睿',e:'tjchang@mail.tfrin.gov.tw'},{n:'陳佩榆',e:'pychen01@mail.tfrin.gov.tw'}],
+  }
+};
+
+// Flatten all departments
+const ALL_DEPTS = {};
+for (const [cat, depts] of Object.entries(STAFF)) {
+  for (const [dept, people] of Object.entries(depts)) {
+    ALL_DEPTS[dept] = { category: cat, people };
+  }
+}
+
+// =============================
+// STATE
+// =============================
+let currentUser = null;
+let tasks = [];
+let editingTaskId = null;
+let currentPriority = 'normal';
+let currentPage = 'dashboard';
+let filterStatus = '';
+let currentProgressTaskId = null;
+
+// =============================
+// INIT
+// =============================
+function init() {
+  loadTasks();
+  populateLoginDepts();
+  populateFilterDepts();
+  setTodayDate();
+}
+
+function loadTasks() {
+  const saved = localStorage.getItem('fri_tasks');
+  tasks = saved ? JSON.parse(saved) : getSampleTasks();
+}
+
+function saveTasks() {
+  localStorage.setItem('fri_tasks', JSON.stringify(tasks));
+}
+
+function getSampleTasks() {
+  const today = new Date();
+  const fmt = d => d.toISOString().split('T')[0];
+  const addDays = (d,n) => { const x=new Date(d); x.setDate(x.getDate()+n); return x; };
+  return [
+    { id:'FRI-2025-001', name:'漁業資源調查年度報告彙整', dept:'海洋漁業組', assignees:['張可揚','蔡佩璇'], priority:'high', startDate:fmt(addDays(today,-20)), endDate:fmt(addDays(today,10)), status:'inprogress', progress:65, desc:'彙整全年度漁業資源調查數據，製作年度報告，含圖表製作及文字撰寫。', note:'請參考去年報告格式', remind:'7', notify:'yes', createdBy:'系統管理員', log:[{date:fmt(addDays(today,-5)),by:'張可揚',pct:40,status:'inprogress',note:'已完成數據收集，正在進行統計分析'},{date:fmt(addDays(today,-2)),by:'張可揚',pct:65,status:'inprogress',note:'圖表製作中，預計本週完成初稿'}] },
+    { id:'FRI-2025-002', name:'水質監測設備年度保養', dept:'技術服務組', assignees:['蔡惠萍'], priority:'normal', startDate:fmt(addDays(today,-5)), endDate:fmt(addDays(today,-2)), status:'overdue', progress:30, desc:'對所有水質監測設備進行年度保養及校正，確保數據準確性。', note:'', remind:'3', notify:'yes', createdBy:'系統管理員', log:[{date:fmt(addDays(today,-3)),by:'蔡惠萍',pct:30,status:'inprogress',note:'已完成主棟設備保養，南棟設備因零件未到尚待處理'}] },
+    { id:'FRI-2025-003', name:'魚類養殖技術研討會籌備', dept:'水產養殖組', assignees:['黃美瑩','謝依靜','官琇瑩'], priority:'urgent', startDate:fmt(addDays(today,-10)), endDate:fmt(addDays(today,5)), status:'inprogress', progress:80, desc:'籌辦年度魚類養殖技術研討會，包含場地預約、講師邀請、議程安排及報名系統設置。', note:'會議室已預約B棟3樓', remind:'3', notify:'yes', createdBy:'系統管理員', log:[{date:fmt(addDays(today,-7)),by:'黃美瑩',pct:50,status:'inprogress',note:'場地及講師確認完畢，報名系統架設中'},{date:fmt(addDays(today,-1)),by:'黃美瑩',pct:80,status:'inprogress',note:'報名系統已上線，議程手冊排版中'}] },
+    { id:'FRI-2025-004', name:'水產加工品質認證申請', dept:'水產加工組', assignees:['蔡慧君','高瑜鎂'], priority:'high', startDate:fmt(addDays(today,-30)), endDate:fmt(addDays(today,-10)), status:'done', progress:100, desc:'備妥水產加工品質認證所需文件，送交主管機關審查。', note:'', remind:'5', notify:'yes', createdBy:'系統管理員', log:[{date:fmt(addDays(today,-12)),by:'蔡慧君',pct:100,status:'done',note:'認證文件已送出，已取得受理通知'}] },
+    { id:'FRI-2025-005', name:'淡水養殖試驗場設備維護', dept:'淡水養殖研究中心', assignees:['楊順德','莊凱婷'], priority:'low', startDate:fmt(addDays(today,-3)), endDate:fmt(addDays(today,20)), status:'pending', progress:0, desc:'對淡水養殖試驗場各項設備進行例行維護及記錄。', note:'', remind:'5', notify:'no', createdBy:'系統管理員', log:[] },
+  ];
+}
+
+function setTodayDate() {
+  const today = new Date().toISOString().split('T')[0];
+  const fi = document.getElementById('f-start');
+  if (fi) fi.value = today;
+}
+
+// =============================
+// LOGIN
+// =============================
+function populateLoginDepts() {
+  const sel = document.getElementById('login-dept');
+  for (const [cat, depts] of Object.entries(STAFF)) {
+    const og = document.createElement('optgroup');
+    og.label = cat;
+    for (const dept of Object.keys(depts)) {
+      const op = document.createElement('option');
+      op.value = dept;
+      op.textContent = dept;
+      og.appendChild(op);
+    }
+    sel.appendChild(og);
+  }
+}
+
+function onLoginDeptChange() {
+  const dept = document.getElementById('login-dept').value;
+  const nameSel = document.getElementById('login-name');
+  nameSel.innerHTML = '';
+  if (!dept) { nameSel.innerHTML = '<option value="">-- 請先選擇單位 --</option>'; return; }
+  const people = ALL_DEPTS[dept]?.people || [];
+  people.forEach(p => {
+    const op = document.createElement('option');
+    op.value = p.n;
+    op.textContent = p.n;
+    nameSel.appendChild(op);
+  });
+}
+
+function doLogin() {
+  const dept = document.getElementById('login-dept').value;
+  const name = document.getElementById('login-name').value;
+  const role = document.getElementById('login-role').value;
+  if (!dept || !name) { showToast('請選擇單位及姓名', 'error'); return; }
+  currentUser = { dept, name, role };
+  document.getElementById('header-user').textContent = `${name}（${dept}）`;
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  // Hide create button for assignees
+  if (role === 'assignee') {
+    document.getElementById('btn-create-task').style.display = 'none';
+  }
+  refreshAll();
+  navigate('dashboard');
+  showToast(`歡迎，${name}！`, 'success');
+}
+
+function logout() {
+  if (!confirm('確定要登出系統？')) return;
+  currentUser = null;
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+}
+
+// =============================
+// NAVIGATION
+// =============================
+function navigate(page, statusFilter = null) {
+  currentPage = page;
+  filterStatus = statusFilter || '';
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+  const pageEl = document.getElementById(`page-${page}`);
+  if (pageEl) pageEl.classList.add('active');
+
+  // highlight nav
+  const navMap = { dashboard:0, tasks:1, 'my-tasks':2, overdue:3, stats:8 };
+  const navItems = document.querySelectorAll('.nav-item');
+  if (page === 'dashboard') navItems[0]?.classList.add('active');
+  else if (page === 'tasks') navItems[1]?.classList.add('active');
+  else if (page === 'my-tasks') navItems[2]?.classList.add('active');
+  else if (page === 'overdue') navItems[3]?.classList.add('active');
+  else if (page === 'stats') navItems[8]?.classList.add('active');
+
+  if (page === 'dashboard') renderDashboard();
+  else if (page === 'tasks') { renderTaskTable(); if (statusFilter) document.getElementById('filter-status').value = statusFilter; filterTasks(); }
+  else if (page === 'my-tasks') renderMyTasks();
+  else if (page === 'overdue') renderOverdue();
+  else if (page === 'stats') renderStats();
+}
+
+function navigateStatus(status) {
+  navigate('tasks', status);
+}
+
+// =============================
+// POPULATE SELECTS
+// =============================
+function populateFilterDepts() {
+  const sel = document.getElementById('filter-dept');
+  for (const dept of Object.keys(ALL_DEPTS)) {
+    const op = document.createElement('option');
+    op.value = dept; op.textContent = dept;
+    sel.appendChild(op);
+  }
+}
+
+function populateFormDepts() {
+  const sel = document.getElementById('f-dept');
+  sel.innerHTML = '<option value="">-- 請選擇單位 --</option>';
+  for (const [cat, depts] of Object.entries(STAFF)) {
+    const og = document.createElement('optgroup');
+    og.label = cat;
+    for (const dept of Object.keys(depts)) {
+      const op = document.createElement('option');
+      op.value = dept; op.textContent = dept;
+      og.appendChild(op);
+    }
+    sel.appendChild(og);
+  }
+}
+
+function onFormDeptChange() {
+  const dept = document.getElementById('f-dept').value;
+  const asel = document.getElementById('f-assignee');
+  asel.innerHTML = '';
+  if (!dept) return;
+  const people = ALL_DEPTS[dept]?.people || [];
+  people.forEach(p => {
+    const op = document.createElement('option');
+    op.value = p.n; op.textContent = p.n;
+    asel.appendChild(op);
+  });
+}
+
+// =============================
+// HELPERS
+// =============================
+function genId() {
+  const yr = new Date().getFullYear();
+  const num = String(tasks.length + 1).padStart(3,'0');
+  return `FRI-${yr}-${num}`;
+}
+
+function today() { return new Date().toISOString().split('T')[0]; }
+
+function daysDiff(date1, date2) {
+  return Math.round((new Date(date1) - new Date(date2)) / 86400000);
+}
+
+function isOverdue(task) {
+  return task.status !== 'done' && task.endDate < today();
+}
+
+function getEffectiveStatus(task) {
+  return isOverdue(task) ? 'overdue' : task.status;
+}
+
+function priorityLabel(p) {
+  const m = { urgent:'🔴 緊急', high:'🟠 高', normal:'🔵 一般', low:'🟢 低' };
+  return m[p] || p;
+}
+
+function priorityBadge(p) {
+  const cls = { urgent:'badge-urgent', high:'badge-high', normal:'badge-normal', low:'badge-low' };
+  return `<span class="badge ${cls[p]||''}">${priorityLabel(p)}</span>`;
+}
+
+function statusLabel(s) {
+  const m = { pending:'待處理', inprogress:'進行中', review:'待審核', done:'已完成', overdue:'已逾期' };
+  return m[s] || s;
+}
+
+function statusBadge(task) {
+  const s = getEffectiveStatus(task);
+  const cls = { pending:'badge-pending', inprogress:'badge-inprogress', review:'badge-review', done:'badge-done', overdue:'badge-overdue' };
+  return `<span class="badge ${cls[s]||''}">${statusLabel(s)}</span>`;
+}
+
+function progressBar(pct) {
+  return `<div style="display:flex;align-items:center;gap:7px;">
+    <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+    <span style="font-size:11.5px;color:var(--text-light);font-weight:600;">${pct}%</span>
+  </div>`;
+}
+
+// =============================
+// REFRESH ALL
+// =============================
+function refreshAll() {
+  updateNavBadges();
+}
+
+function updateNavBadges() {
+  const all = tasks.filter(t => t.status !== 'done');
+  const my = tasks.filter(t => t.assignees.includes(currentUser?.name) && t.status !== 'done');
+  const ov = tasks.filter(t => isOverdue(t));
+  document.getElementById('nav-badge-all').textContent = all.length;
+  document.getElementById('nav-badge-my').textContent = my.length;
+  document.getElementById('nav-badge-overdue').textContent = ov.length;
+}
+
+// =============================
+// DASHBOARD
+// =============================
+function renderDashboard() {
+  const d = new Date();
+  document.getElementById('dash-date').textContent = d.toLocaleDateString('zh-TW', {year:'numeric',month:'long',day:'numeric',weekday:'long'});
+
+  const total = tasks.length;
+  const pending = tasks.filter(t=>t.status==='pending').length;
+  const inprog = tasks.filter(t=>t.status==='inprogress').length;
+  const done = tasks.filter(t=>t.status==='done').length;
+  const overdue = tasks.filter(t=>isOverdue(t)).length;
+  const urgent = tasks.filter(t=>t.priority==='urgent'&&t.status!=='done').length;
+
+  document.getElementById('stats-grid').innerHTML = `
+    <div class="stat-card"><div class="stat-icon blue">📋</div><div class="stat-info"><div class="stat-num">${total}</div><div class="stat-label">全部交辦</div></div></div>
+    <div class="stat-card"><div class="stat-icon amber">⏳</div><div class="stat-info"><div class="stat-num">${pending}</div><div class="stat-label">待處理</div></div></div>
+    <div class="stat-card"><div class="stat-icon teal">🔄</div><div class="stat-info"><div class="stat-num">${inprog}</div><div class="stat-label">進行中</div></div></div>
+    <div class="stat-card"><div class="stat-icon green">✅</div><div class="stat-info"><div class="stat-num">${done}</div><div class="stat-label">已完成</div></div></div>
+    <div class="stat-card"><div class="stat-icon coral">⚠️</div><div class="stat-info"><div class="stat-num" style="color:var(--coral)">${overdue}</div><div class="stat-label">逾期事項</div></div></div>
+    <div class="stat-card"><div class="stat-icon purple">🔴</div><div class="stat-info"><div class="stat-num" style="color:var(--lavender)">${urgent}</div><div class="stat-label">緊急事項</div></div></div>
+  `;
+
+  // Alerts
+  const urgentTasks = tasks.filter(t=>isOverdue(t)||(t.priority==='urgent'&&t.status!=='done')).slice(0,5);
+  const alertsEl = document.getElementById('dash-alerts');
+  if (!urgentTasks.length) {
+    alertsEl.innerHTML = '<div class="alert-card"><span>🎉</span> 目前沒有緊急或逾期事項！</div>';
+  } else {
+    alertsEl.innerHTML = urgentTasks.map(t => {
+      const isOv = isOverdue(t);
+      return `<div class="alert-card${isOv?' urgent':''}" onclick="viewTask('${t.id}')">
+        <span>${isOv?'🔴':'🟠'}</span>
+        <div style="flex:1">
+          <div style="font-weight:700;font-size:13px;">${t.name}</div>
+          <div style="font-size:11.5px;color:var(--text-light);margin-top:2px;">${t.dept} · ${t.assignees.join(', ')} · 截止：${t.endDate}</div>
+        </div>
+        ${isOv?`<span class="overdue-flag">逾期${daysDiff(today(),t.endDate)}天</span>`:''}
+      </div>`;
+    }).join('');
+  }
+
+  // Recent
+  const recent = [...tasks].sort((a,b)=>b.id.localeCompare(a.id)).slice(0,5);
+  document.getElementById('dash-recent').innerHTML = recent.map(t=>`
+    <div class="alert-card" onclick="viewTask('${t.id}')" style="background:white;">
+      <span>📌</span>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:13px;">${t.name}</div>
+        <div style="font-size:11.5px;color:var(--text-light);margin-top:2px;">${t.dept} · ${statusLabel(getEffectiveStatus(t))}</div>
+      </div>
+      ${priorityBadge(t.priority)}
+    </div>
+  `).join('');
+
+  // Dept chart
+  const deptCount = {};
+  tasks.forEach(t => { deptCount[t.dept] = (deptCount[t.dept]||0)+1; });
+  const max = Math.max(...Object.values(deptCount), 1);
+  document.getElementById('dept-chart').innerHTML = Object.entries(deptCount).sort((a,b)=>b[1]-a[1]).map(([dept,cnt])=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:6px 10px;background:var(--bg);border-radius:var(--radius-sm);flex:1;min-width:200px;">
+      <div style="font-size:12.5px;font-weight:600;width:120px;flex-shrink:0;">${dept}</div>
+      <div style="flex:1;height:18px;background:var(--border);border-radius:9px;overflow:hidden;">
+        <div style="height:100%;border-radius:9px;background:linear-gradient(90deg,var(--ocean),var(--teal));width:${(cnt/max*100).toFixed(0)}%;transition:width 0.5s;"></div>
+      </div>
+      <div style="font-size:13px;font-weight:700;color:var(--ocean);width:24px;text-align:right;">${cnt}</div>
+    </div>
+  `).join('');
+}
+
+// =============================
+// TASK TABLE
+// =============================
+function renderTaskTable(filter = {}) {
+  let list = [...tasks];
+  if (filter.status === 'overdue') list = list.filter(t=>isOverdue(t));
+  else if (filter.status) list = list.filter(t=>t.status===filter.status);
+
+  const search = document.getElementById('search-input')?.value.toLowerCase()||'';
+  const deptF = document.getElementById('filter-dept')?.value||'';
+  const priF = document.getElementById('filter-priority')?.value||'';
+  const statF = document.getElementById('filter-status')?.value||'';
+
+  list = list.filter(t => {
+    if (search && !t.name.toLowerCase().includes(search) && !t.id.toLowerCase().includes(search) && !t.assignees.join(' ').toLowerCase().includes(search)) return false;
+    if (deptF && t.dept !== deptF) return false;
+    if (priF && t.priority !== priF) return false;
+    if (statF === 'overdue' && !isOverdue(t)) return false;
+    else if (statF && statF !== 'overdue' && t.status !== statF) return false;
+    return true;
+  });
+
+  const tbody = document.getElementById('task-tbody');
+  const empty = document.getElementById('task-empty');
+  document.getElementById('task-count-display').textContent = `共 ${list.length} 筆`;
+
+  if (!list.length) { tbody.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display = 'none';
+
+  tbody.innerHTML = list.map(t => {
+    const ov = isOverdue(t);
+    const overdueDays = ov ? daysDiff(today(), t.endDate) : 0;
+    return `<tr>
+      <td><span class="task-id">${t.id}</span></td>
+      <td><div style="font-weight:600;font-size:13.5px;">${t.name}</div>${ov?`<div class="overdue-flag">逾期${overdueDays}天</div>`:''}</td>
+      <td><div style="font-size:12.5px;font-weight:600;color:var(--ocean);">${t.dept}</div><div class="assignee-chips">${t.assignees.map(a=>`<span class="assignee-chip">${a}</span>`).join('')}</div></td>
+      <td>${priorityBadge(t.priority)}</td>
+      <td style="font-size:12.5px;">${t.startDate}</td>
+      <td style="font-size:12.5px;${ov?'color:var(--coral);font-weight:700;':''}">${t.endDate}</td>
+      <td>${progressBar(t.progress)}</td>
+      <td>${statusBadge(t)}</td>
+      <td>
+        <button class="action-btn view" onclick="viewTask('${t.id}')">詳情</button>
+        ${canEdit(t)?`<button class="action-btn edit" onclick="editTask('${t.id}')">編輯</button>`:''}
+        <button class="action-btn update" onclick="openProgressModal('${t.id}')">回報</button>
+        ${canEdit(t)?`<button class="action-btn del" onclick="deleteTask('${t.id}')">刪除</button>`:''}
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function filterTasks() { renderTaskTable(); }
+
+function canEdit(task) {
+  return currentUser?.role === 'admin';
+}
+
+// =============================
+// MY TASKS
+// =============================
+function renderMyTasks() {
+  const list = tasks.filter(t => t.assignees.includes(currentUser?.name));
+  const tbody = document.getElementById('my-task-tbody');
+  const empty = document.getElementById('my-task-empty');
+  if (!list.length) { tbody.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+  tbody.innerHTML = list.map(t=>`<tr>
+    <td><span class="task-id">${t.id}</span></td>
+    <td><div style="font-weight:600;">${t.name}</div></td>
+    <td>${priorityBadge(t.priority)}</td>
+    <td style="font-size:12.5px;">${t.startDate}</td>
+    <td style="font-size:12.5px;${isOverdue(t)?'color:var(--coral);font-weight:700;':''}">${t.endDate}</td>
+    <td>${progressBar(t.progress)}</td>
+    <td>${statusBadge(t)}</td>
+    <td>
+      <button class="action-btn view" onclick="viewTask('${t.id}')">詳情</button>
+      <button class="action-btn update" onclick="openProgressModal('${t.id}')">回報進度</button>
+    </td>
+  </tr>`).join('');
+}
+
+// =============================
+// OVERDUE
+// =============================
+function renderOverdue() {
+  const list = tasks.filter(t=>isOverdue(t));
+  const tbody = document.getElementById('overdue-tbody');
+  const empty = document.getElementById('overdue-empty');
+  if (!list.length) { tbody.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+  tbody.innerHTML = list.map(t=>`<tr>
+    <td><span class="task-id">${t.id}</span></td>
+    <td><div style="font-weight:600;">${t.name}</div></td>
+    <td><div style="font-size:12px;color:var(--ocean);font-weight:600;">${t.dept}</div><div class="assignee-chips">${t.assignees.map(a=>`<span class="assignee-chip">${a}</span>`).join('')}</div></td>
+    <td>${priorityBadge(t.priority)}</td>
+    <td style="color:var(--coral);font-weight:700;">${t.endDate}</td>
+    <td><span style="color:var(--coral);font-weight:900;font-size:15px;">+${daysDiff(today(),t.endDate)}天</span></td>
+    <td>${progressBar(t.progress)}</td>
+    <td>
+      <button class="action-btn view" onclick="viewTask('${t.id}')">詳情</button>
+      <button class="action-btn update" onclick="openProgressModal('${t.id}')">回報</button>
+    </td>
+  </tr>`).join('');
+}
+
+// =============================
+// STATS
+// =============================
+function renderStats() {
+  const byStatus = {pending:0,inprogress:0,review:0,done:0,overdue:0};
+  const byPri = {urgent:0,high:0,normal:0,low:0};
+  const byDept = {};
+  tasks.forEach(t=>{
+    const s = getEffectiveStatus(t);
+    byStatus[s]=(byStatus[s]||0)+1;
+    byPri[t.priority]=(byPri[t.priority]||0)+1;
+    byDept[t.dept]=(byDept[t.dept]||0)+1;
+  });
+
+  const total = tasks.length || 1;
+  const completionRate = Math.round((byStatus.done/total)*100);
+
+  document.getElementById('stats-content').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;">
+      <div class="detail-card">
+        <div style="padding:18px 20px;">
+          <div class="section-title" style="font-size:15px;margin-bottom:16px;">狀態分佈</div>
+          ${Object.entries(byStatus).map(([s,c])=>`
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+              <div style="font-size:13px;width:70px;">${statusLabel(s)}</div>
+              <div style="flex:1;height:20px;background:var(--border);border-radius:10px;overflow:hidden;">
+                <div style="height:100%;border-radius:10px;background:linear-gradient(90deg,var(--ocean),var(--teal));width:${(c/(total||1)*100).toFixed(0)}%;"></div>
+              </div>
+              <div style="font-weight:700;color:var(--ocean);width:30px;text-align:right;">${c}</div>
+            </div>`).join('')}
+        </div>
+      </div>
+      <div class="detail-card">
+        <div style="padding:18px 20px;">
+          <div class="section-title" style="font-size:15px;margin-bottom:16px;">完成率</div>
+          <div style="text-align:center;padding:20px;">
+            <div style="font-size:56px;font-weight:900;color:var(--ocean);">${completionRate}%</div>
+            <div style="color:var(--text-light);font-size:13px;margin-top:8px;">已完成 ${byStatus.done} / 共 ${total} 件</div>
+          </div>
+          <div class="section-title" style="font-size:15px;margin-bottom:12px;margin-top:8px;">優先度分佈</div>
+          ${Object.entries(byPri).map(([p,c])=>`
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+              <div style="font-size:12px;width:60px;">${priorityLabel(p).replace(/^.{1}/,'')}</div>
+              <div style="flex:1;height:14px;background:var(--border);border-radius:7px;overflow:hidden;">
+                <div style="height:100%;border-radius:7px;background:linear-gradient(90deg,var(--ocean),var(--teal));width:${(c/(total||1)*100).toFixed(0)}%;"></div>
+              </div>
+              <span style="font-size:12px;font-weight:700;color:var(--ocean);">${c}</span>
+            </div>`).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="detail-card">
+      <div style="padding:18px 20px;">
+        <div class="section-title" style="font-size:15px;margin-bottom:16px;">各單位交辦統計</div>
+        <table class="task-table">
+          <thead><tr><th>單位</th><th>交辦數</th><th>進行中</th><th>已完成</th><th>逾期</th><th>完成率</th></tr></thead>
+          <tbody>
+            ${Object.entries(byDept).sort((a,b)=>b[1]-a[1]).map(([dept,cnt])=>{
+              const dtasks = tasks.filter(t=>t.dept===dept);
+              const dDone = dtasks.filter(t=>t.status==='done').length;
+              const dOv = dtasks.filter(t=>isOverdue(t)).length;
+              const dIn = dtasks.filter(t=>t.status==='inprogress').length;
+              return `<tr>
+                <td style="font-weight:600;color:var(--ocean);">${dept}</td>
+                <td>${cnt}</td><td>${dIn}</td><td>${dDone}</td>
+                <td style="color:${dOv?'var(--coral)':''};">${dOv}</td>
+                <td>${progressBar(Math.round(dDone/cnt*100))}</td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+// =============================
+// CREATE / EDIT TASK
+// =============================
+function openCreateModal() {
+  if (currentUser?.role !== 'admin') { showToast('僅交辦人可新增任務', 'error'); return; }
+  editingTaskId = null;
+  document.getElementById('modal-task-title').textContent = '新增交辦事項';
+  populateFormDepts();
+  document.getElementById('f-name').value = '';
+  document.getElementById('f-dept').value = '';
+  document.getElementById('f-assignee').innerHTML = '';
+  document.getElementById('f-start').value = today();
+  document.getElementById('f-end').value = '';
+  document.getElementById('f-desc').value = '';
+  document.getElementById('f-note').value = '';
+  document.getElementById('f-notify').value = 'yes';
+  document.getElementById('f-remind').value = '3';
+  selectPriority('normal');
+  openModal('modal-task');
+}
+
+function editTask(id) {
+  const t = tasks.find(x=>x.id===id);
+  if (!t) return;
+  editingTaskId = id;
+  document.getElementById('modal-task-title').textContent = '編輯交辦事項';
+  populateFormDepts();
+  document.getElementById('f-name').value = t.name;
+  document.getElementById('f-dept').value = t.dept;
+  onFormDeptChange();
+  setTimeout(()=>{
+    const asel = document.getElementById('f-assignee');
+    Array.from(asel.options).forEach(op => { op.selected = t.assignees.includes(op.value); });
+  }, 50);
+  document.getElementById('f-start').value = t.startDate;
+  document.getElementById('f-end').value = t.endDate;
+  document.getElementById('f-desc').value = t.desc;
+  document.getElementById('f-note').value = t.note||'';
+  document.getElementById('f-notify').value = t.notify||'yes';
+  document.getElementById('f-remind').value = t.remind||'3';
+  selectPriority(t.priority);
+  openModal('modal-task');
+}
+
+function saveTask() {
+  const name = document.getElementById('f-name').value.trim();
+  const dept = document.getElementById('f-dept').value;
+  const assigneeEl = document.getElementById('f-assignee');
+  const assignees = Array.from(assigneeEl.selectedOptions).map(o=>o.value);
+  const startDate = document.getElementById('f-start').value;
+  const endDate = document.getElementById('f-end').value;
+  const desc = document.getElementById('f-desc').value.trim();
+
+  if (!name||!dept||!assignees.length||!startDate||!endDate) {
+    showToast('請填寫所有必填欄位', 'error'); return;
+  }
+  if (endDate < startDate) { showToast('預定完成日期不可早於交辦日期', 'error'); return; }
+
+  const taskData = {
+    name, dept, assignees, startDate, endDate, desc,
+    priority: currentPriority,
+    note: document.getElementById('f-note').value,
+    notify: document.getElementById('f-notify').value,
+    remind: document.getElementById('f-remind').value,
+  };
+
+  if (editingTaskId) {
+    const idx = tasks.findIndex(t=>t.id===editingTaskId);
+    tasks[idx] = { ...tasks[idx], ...taskData };
+    showToast('交辦事項已更新', 'success');
+  } else {
+    tasks.push({ id:genId(), ...taskData, status:'pending', progress:0, createdBy:currentUser.name, log:[] });
+    showToast('新增交辦事項成功！', 'success');
+  }
+
+  saveTasks();
+  refreshAll();
+  closeModal('modal-task');
+  if (currentPage === 'tasks') renderTaskTable();
+  if (currentPage === 'dashboard') renderDashboard();
+}
+
+function deleteTask(id) {
+  if (!confirm('確定刪除此交辦事項？此動作無法復原。')) return;
+  tasks = tasks.filter(t=>t.id!==id);
+  saveTasks();
+  refreshAll();
+  renderTaskTable();
+  showToast('已刪除交辦事項', 'error');
+}
+
+function selectPriority(p) {
+  currentPriority = p;
+  document.querySelectorAll('.priority-option').forEach(el => {
+    el.classList.toggle('selected', el.dataset.p === p);
+  });
+}
+
+// =============================
+// VIEW TASK DETAIL
+// =============================
+function viewTask(id) {
+  const t = tasks.find(x=>x.id===id);
+  if (!t) return;
+  document.getElementById('detail-modal-title').textContent = t.name;
+
+  const ov = isOverdue(t);
+  const overdueDays = ov ? daysDiff(today(), t.endDate) : 0;
+
+  document.getElementById('detail-modal-body').innerHTML = `
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;">
+      <span class="task-id">${t.id}</span>
+      ${priorityBadge(t.priority)}
+      ${statusBadge(t)}
+      ${ov?`<span class="badge badge-overdue">逾期 ${overdueDays} 天</span>`:''}
+    </div>
+
+    <div class="detail-grid">
+      <div class="detail-item">
+        <div class="detail-item-label">承辦單位</div>
+        <div class="detail-item-value" style="color:var(--ocean);font-weight:700;">${t.dept}</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-item-label">承辦人員</div>
+        <div class="assignee-chips">${t.assignees.map(a=>`<span class="assignee-chip">${a}</span>`).join('')}</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-item-label">交辦日期</div>
+        <div class="detail-item-value">${t.startDate}</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-item-label">預定完成日期</div>
+        <div class="detail-item-value" style="${ov?'color:var(--coral);font-weight:700;':''}">${t.endDate}${ov?` <span class="overdue-flag">（已逾期）</span>`:''}</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-item-label">建立者</div>
+        <div class="detail-item-value">${t.createdBy||'-'}</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-item-label">執行進度</div>
+        <div class="detail-item-value">${progressBar(t.progress)}</div>
+      </div>
+    </div>
+
+    ${t.desc?`<div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;margin-bottom:16px;">
+      <div class="detail-item-label" style="margin-bottom:6px;">工作內容摘要</div>
+      <div style="font-size:14px;line-height:1.7;">${t.desc}</div>
+    </div>`:''}
+
+    ${t.note?`<div style="font-size:13px;color:var(--text-light);margin-bottom:16px;">📎 備註：${t.note}</div>`:''}
+
+    <div class="section-title" style="font-size:14px;margin-bottom:12px;">📝 進度回報紀錄</div>
+    ${t.log.length ? `<div class="timeline">
+      ${t.log.map(l=>`<div class="timeline-item">
+        <div class="timeline-dot">👤</div>
+        <div class="timeline-content">
+          <div class="timeline-meta">
+            <span style="font-weight:700;">${l.by}</span>
+            <span>${l.date} · ${statusLabel(l.status)} · ${l.pct}%</span>
+          </div>
+          <div class="timeline-text">${l.note}</div>
+        </div>
+      </div>`).join('')}
+    </div>` : '<div style="color:var(--text-light);font-size:13px;padding:12px 0;">尚無進度回報紀錄</div>'}
+  `;
+
+  document.getElementById('detail-modal-footer').innerHTML = `
+    <button class="btn btn-secondary" onclick="closeModal('modal-detail')">關閉</button>
+    ${canEdit(t)?`<button class="btn btn-secondary" onclick="closeModal('modal-detail');editTask('${t.id}')">✏️ 編輯</button>`:''}
+    <button class="btn btn-teal" onclick="closeModal('modal-detail');openProgressModal('${t.id}')">📝 回報進度</button>
+  `;
+
+  openModal('modal-detail');
+}
+
+// =============================
+// PROGRESS UPDATE
+// =============================
+function openProgressModal(id) {
+  const t = tasks.find(x=>x.id===id);
+  if (!t) return;
+  currentProgressTaskId = id;
+  document.getElementById('prog-task-name').textContent = `${t.id} · ${t.name}`;
+  document.getElementById('prog-slider').value = t.progress;
+  document.getElementById('prog-pct-display').textContent = t.progress + '%';
+  document.getElementById('prog-status').value = t.status === 'done' ? 'done' : (t.status || 'inprogress');
+  document.getElementById('prog-note').value = '';
+  openModal('modal-progress');
+}
+
+function updateSliderDisplay() {
+  const v = document.getElementById('prog-slider').value;
+  document.getElementById('prog-pct-display').textContent = v + '%';
+}
+
+function saveProgress() {
+  const note = document.getElementById('prog-note').value.trim();
+  if (!note) { showToast('請填寫進度說明', 'error'); return; }
+
+  const idx = tasks.findIndex(t=>t.id===currentProgressTaskId);
+  if (idx < 0) return;
+
+  const pct = parseInt(document.getElementById('prog-slider').value);
+  const status = document.getElementById('prog-status').value;
+
+  tasks[idx].progress = pct;
+  tasks[idx].status = status;
+  tasks[idx].log.push({
+    date: today(),
+    by: currentUser.name,
+    pct, status, note
+  });
+
+  saveTasks();
+  refreshAll();
+  closeModal('modal-progress');
+
+  if (currentPage === 'tasks') renderTaskTable();
+  if (currentPage === 'my-tasks') renderMyTasks();
+  if (currentPage === 'overdue') renderOverdue();
+  if (currentPage === 'dashboard') renderDashboard();
+
+  showToast('進度已成功回報！', 'success');
+}
+
+// =============================
+// ID SEARCH
+// =============================
+function openIdSearch() {
+  document.getElementById('id-search-val').value = '';
+  document.getElementById('id-search-result').innerHTML = '';
+  openModal('modal-id-search');
+}
+
+function searchById() {
+  const id = document.getElementById('id-search-val').value.trim().toUpperCase();
+  const result = document.getElementById('id-search-result');
+  if (!id) { result.innerHTML = '<p style="color:var(--coral);font-size:13px;">請輸入任務ID</p>'; return; }
+  const t = tasks.find(x=>x.id===id);
+  if (!t) {
+    result.innerHTML = '<div class="empty-state" style="padding:20px;"><div class="empty-icon">🔍</div><p>找不到此任務ID</p></div>';
+    return;
+  }
+  const ov = isOverdue(t);
+  result.innerHTML = `<div class="search-result-card" onclick="closeModal('modal-id-search');viewTask('${t.id}')">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+      <span class="task-id">${t.id}</span>
+      ${priorityBadge(t.priority)}
+    </div>
+    <div style="font-size:15px;font-weight:700;margin-bottom:6px;">${t.name}</div>
+    <div style="font-size:12.5px;color:var(--text-light);margin-bottom:8px;">${t.dept} · ${t.assignees.join(', ')}</div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+      ${statusBadge(t)}
+      ${progressBar(t.progress)}
+      <span style="font-size:12px;color:var(--text-light);">截止：${t.endDate}</span>
+    </div>
+    ${ov?`<div class="overdue-flag" style="margin-top:6px;">⚠️ 已逾期 ${daysDiff(today(),t.endDate)} 天</div>`:''}
+  </div>
+  <p style="font-size:12px;color:var(--text-light);text-align:center;margin-top:8px;">點擊查看完整詳情</p>`;
+}
+
+// =============================
+// MODAL
+// =============================
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+// Close on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) closeModal(overlay.id);
+  });
+});
+
+// =============================
+// TOAST
+// =============================
+function showToast(msg, type = '') {
+  const tc = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  const icons = { success:'✅', error:'❌', '':'ℹ️' };
+  toast.innerHTML = `<span>${icons[type]||'ℹ️'}</span> ${msg}`;
+  tc.appendChild(toast);
+  setTimeout(() => toast.remove(), 3200);
+}
+
+// =============================
+// START
+// =============================
+init();
+</script>
+</body>
+</html>
