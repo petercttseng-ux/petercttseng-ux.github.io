@@ -1752,6 +1752,28 @@ async function init() {
   showDbLoading(false);
   setSyncStatus('ok', '已同步');
   startAutoRefresh();
+
+  // ── 還原登入 session（頁面重新整理後自動登入）──
+  try {
+    const savedSession = sessionStorage.getItem('fri_session');
+    if (savedSession) {
+      const user = JSON.parse(savedSession);
+      // 靜默恢復，不顯示歡迎 toast
+      currentUser = user;
+      document.getElementById('header-user').textContent = `${user.name}（${user.dept}）`;
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      if (user.role === 'assignee') {
+        document.getElementById('btn-create-task').style.display = 'none';
+        const deptFilter = document.getElementById('filter-dept');
+        if (deptFilter) deptFilter.style.display = 'none';
+        const navItems = document.querySelectorAll('.nav-item');
+        if (navItems[1]) navItems[1].querySelector('span.nav-icon').nextSibling.textContent = ' 我的交辦';
+      }
+      refreshAll();
+      navigate('dashboard');
+    }
+  } catch(e) { /* session 還原失敗時靜默忽略，讓使用者重新登入 */ }
 }
 
 async function loadTasks() {
@@ -1851,6 +1873,8 @@ function onLoginDeptChange() {
 function completeLogin(user) {
   const { dept, name, role } = user;
   currentUser = { dept, name, role };
+  // 儲存 session，重新整理後自動還原
+  try { sessionStorage.setItem('fri_session', JSON.stringify({ dept, name, role })); } catch(e) {}
   document.getElementById('header-user').textContent = `${name}（${dept}）`;
   // Hide all login cards then hide screen
   ['login-card-select','login-card-password','login-card-setpw','login-card-resetpw'].forEach(cid => {
@@ -1879,6 +1903,8 @@ function logout() {
   if (!confirm('確定要登出系統？')) return;
   currentUser = null;
   pendingLoginUser = null;
+  // 清除登入 session
+  try { sessionStorage.removeItem('fri_session'); } catch(e) {}
   // Reset to select card
   showLoginCard('login-card-select');
   document.getElementById('login-screen').style.display = 'flex';
