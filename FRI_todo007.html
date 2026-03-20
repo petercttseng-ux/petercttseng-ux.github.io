@@ -1790,6 +1790,8 @@ async function loadTasks() {
 
 async function saveTasks() {
   setSyncStatus('syncing', '儲存中...');
+  // 寫入前先讀取最新資料，避免覆蓋其他使用者的並行變更
+  // 以本機最新版本為準（最後寫入者獲勝）
   const ok = await dbSet(DB_TASKS_KEY, tasks);
   if (ok) {
     setSyncStatus('ok', '已同步 ' + new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'}));
@@ -1801,22 +1803,34 @@ async function saveTasks() {
 }
 
 // =============================
-// AUTO-REFRESH (pull every 30s)
+// AUTO-REFRESH (pull every 10s)
 // =============================
 function startAutoRefresh() {
   if (autoRefreshTimer) clearInterval(autoRefreshTimer);
   autoRefreshTimer = setInterval(async () => {
     if (!currentUser) return;
-    const prev = tasks.length;
     await loadTasks();
     refreshAll();
-    // Quietly re-render current page
     if (currentPage === 'dashboard') renderDashboard();
     else if (currentPage === 'tasks') renderTaskTable();
     else if (currentPage === 'my-tasks') renderMyTasks();
     else if (currentPage === 'overdue') renderOverdue();
     setSyncStatus('ok', '已同步 ' + new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'}));
-  }, 30000);
+  }, 10000);  // 每10秒同步一次
+
+  // 分頁重新獲得焦點時立即同步
+  document.addEventListener('visibilitychange', async () => {
+    if (document.visibilityState === 'visible' && currentUser) {
+      setSyncStatus('syncing', '同步中...');
+      await loadTasks();
+      refreshAll();
+      if (currentPage === 'dashboard') renderDashboard();
+      else if (currentPage === 'tasks') renderTaskTable();
+      else if (currentPage === 'my-tasks') renderMyTasks();
+      else if (currentPage === 'overdue') renderOverdue();
+      setSyncStatus('ok', '已同步 ' + new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'}));
+    }
+  });
 }
 
 function getSampleTasks() {
@@ -2731,7 +2745,12 @@ async function goToPasswordStep() {
   if (!dept || !name) { showToast('請選擇單位及姓名', 'error'); return; }
   pendingLoginUser = { dept, name, role };
 
-  if (await userHasPassword(name)) {
+  // 強制從共用資料庫讀取最新密碼資料，確保跨瀏覽器一致
+  showDbLoading(true, '正在驗證身份資料...');
+  const hasPw = await userHasPassword(name);
+  showDbLoading(false);
+
+  if (hasPw) {
     // Show enter-password card
     document.getElementById('pw-greeting').textContent = name + '，歡迎回來';
     document.getElementById('pw-sub-name').textContent = dept;
