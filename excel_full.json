@@ -1,0 +1,939 @@
+{
+  "長官及行政單位": [
+    {
+      "1": "長官及行政單位"
+    },
+    {
+      "1": "所長室",
+      "3": "秘書室",
+      "5": "人事室",
+      "7": "主計室",
+      "9": "政風室"
+    },
+    {
+      "1": "張錦宜",
+      "2": "cichang@mail.tfrin.gov.tw",
+      "3": "許復盛",
+      "4": "fshsu@mail.tfrin.gov.tw",
+      "5": "江瑜萍",
+      "6": "ypjiang@mail.tfrin.gov.tw",
+      "7": "潘富生",
+      "8": "fspan@mail.tfrin.gov.tw",
+      "9": "張俊換",
+      "10": "chchang04@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "黃嬿諭",
+      "2": "y-y.huang@mail.tfrin.gov.tw",
+      "3": "郝再隆 ",
+      "4": "jlhau@mail.tfrin.gov.tw",
+      "5": "高子嵐",
+      "6": "tlkao@mail.tfrin.gov.tw",
+      "7": "林紓玉",
+      "8": "sylin@mail.tfrin.gov.tw",
+      "9": "陳柑伶 ",
+      "10": "glchen@mail.tfrin.gov.tw"
+    },
+    {
+      "3": "水試所總收發",
+      "4": "frigm@mail.tfrin.gov.tw",
+      "5": "杜玉冬 ",
+      "6": "yttu@mail.tfrin.gov.tw",
+      "7": "戴文英",
+      "8": "wytai@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "副所長室",
+      "3": "林佳琪",
+      "4": "cclin01@mail.tfrin.gov.tw",
+      "5": "張芷瑋",
+      "6": "jwchang@mail.tfrin.gov.tw",
+      "7": "周麗卿",
+      "8": "acc3@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "葉信明",
+      "2": "hmyeh@mail.tfrin.gov.tw",
+      "3": "謝妙恂",
+      "4": "mhhsieh@mail.tfrin.gov.tw",
+      "5": "張絜婷",
+      "6": "jtzhang@mail.tfrin.gov.tw",
+      "7": "戴玉滿",
+      "8": "ymtai@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "胡秀雯 ",
+      "2": "hwhu@mail.tfrin.gov.tw ",
+      "3": "楊珮芬",
+      "4": "pfyang@mail.tfrin.gov.tw",
+      "5": "楊逸筠",
+      "6": "   iyyang@mail.tfrin.gov.tw",
+      "7": "阮志中",
+      "8": "jjruan@mail.tfrin.gov.tw"
+    },
+    {
+      "3": "陳奕森",
+      "4": "yschen@mail.tfrin.gov.tw",
+      "7": "楊証丞",
+      "8": "zcyang@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "主任秘書室",
+      "3": "張麗芳",
+      "4": "lfchang@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "曾振德",
+      "2": "cttseng@mail.tfrin.gov.tw",
+      "3": "許履安",
+      "4": "lasheu@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "詹麗萍",
+      "2": "lpchan@mail.tfrin.gov.tw",
+      "3": "黃麗君",
+      "4": "lchuang@mail.tfrin.gov.tw"
+    },
+    {
+      "3": "曾美鳳",
+      "4": "mftseng@mail.tfrin.gov.tw"
+    },
+    {
+      "3": "江貞憲",
+      "4": "chchiang@mail.tfrin.gov.tw"
+    },
+    {
+      "3": "袁淑玲",
+      "4": "slyuan@mail.tfrin.gov.tw"
+    },
+    {
+      "3": "林怡利",
+      "4": "yllin@mail.tfrin.gov.tw"
+    },
+    {
+      "3": "簡羿萱",
+      "4": "yhchien@mail.tfrin.gov.tw"
+    },
+    {
+      "3": "莊鈞惟",
+      "4": "jwzhuang@mail.tfrin.gov.tw"
+    },
+    {
+      "3": "黃渼純",
+      "4": "mchuang@mail.tfrin.gov.tw"
+    },
+    {
+      "3": "彭淑馨",
+      "4": "sspeng@mail.tfrin.gov.tw"
+    },
+    {
+      "3": "蕭汎汝",
+      "4": "fjhsiao@mail.tfrin.gov.tw"
+    },
+    {
+      "3": "楊晶齡",
+      "4": "jlyang@mail.tfrin.gov.tw"
+    },
+    {
+      "3": "梁詩涵",
+      "4": "shliang@mail.tfrin.gov.tw"
+    },
+    {
+      "3": "李宜安",
+      "4": "yalee@mail.tfrin.gov.tw"
+    },
+    {
+      "3": "廖柏鈞",
+      "4": "pcliao@mail.tfrin.gov.tw"
+    },
+    {
+      "3": "蔡良瑩",
+      "4": "acc5@mail.tfrin.gov.tw"
+    },
+    {
+      "3": "何淑真",
+      "4": "scho02@mail.tfrin.gov.tw"
+    }
+  ],
+  "研究單位": [
+    {
+      "1": "研究單位"
+    },
+    {
+      "1": "水產養殖組",
+      "3": "海洋漁業組",
+      "5": "技術服務組",
+      "7": "水產加工組"
+    },
+    {
+      "1": "黃美瑩",
+      "2": "myhuang@mail.tfrin.gov.tw",
+      "3": "張可揚",
+      "4": "kychang@mail.tfrin.gov.tw",
+      "5": "蔡惠萍 ",
+      "6": "hptsai@mail.tfrin.gov.tw",
+      "7": "蔡慧君 ",
+      "8": "hjchai@mail.tfrin.gov.tw "
+    },
+    {
+      "1": "謝依靜",
+      "2": "yjxie@mail.tfrin.gov.tw",
+      "3": "蔡佩璇",
+      "4": "phtsai01@mail.tfrin.gov.tw",
+      "5": "鄭淇尹",
+      "6": "cycheng@mail.tfrin.gov.tw",
+      "7": "高瑜鎂 ",
+      "8": "ymkao@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "官琇瑩",
+      "2": "hykuan@mail.tfrin.gov.tw",
+      "3": "劉國強",
+      "4": "kcliu@mail.tfrin.gov.tw",
+      "5": "陳高松",
+      "6": "kschen@mail.tfrin.gov.tw",
+      "7": "潘宜庭",
+      "8": "ytpan@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "吳嘉哲",
+      "2": "ccwu02@mail.tfrin.gov.tw",
+      "3": "蕭聖代",
+      "4": "sthsiao@mail.tfrin.gov.tw",
+      "5": "李周陵",
+      "6": "jllee@mail.tfrin.gov.tw",
+      "7": "郭柏昇 ",
+      "8": "pskuo@mail.tfrin.gov.tw "
+    },
+    {
+      "1": "潘泰安",
+      "2": "tapan@mail.tfrin.gov.tw",
+      "3": "莊世昌",
+      "4": "scchuang@mail.tfrin.gov.tw",
+      "5": "吳美錚",
+      "6": "mcwu@mail.tfrin.gov.tw",
+      "7": "葉駿達",
+      "8": "ctyeh@mail.tfrin.gov.tw "
+    },
+    {
+      "1": "朱惠真",
+      "2": "hjju@mail.tfrin.gov.tw",
+      "3": "潘佳怡",
+      "4": "cjpan@mail.tfrin.gov.tw",
+      "5": "林志遠",
+      "6": "cylin@mail.tfrin.gov.tw",
+      "7": "易琮凱 ",
+      "8": "tkyi@mail.tfrin.gov.tw "
+    },
+    {
+      "1": "杜金蓮",
+      "2": "jldu@mail.tfrin.gov.tw",
+      "3": "曾秀茹",
+      "4": "srtseng@mail.tfrin.gov.tw",
+      "5": "陳威克",
+      "6": "wkchen@mail.tfrin.gov.tw",
+      "7": "高堂穎",
+      "8": "tykao@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "林玠如",
+      "2": "cjlin@mail.tfrin.gov.tw",
+      "3": "李堂炯",
+      "4": "tjli@mail.tfrin.gov.tw",
+      "5": "郭恆如",
+      "6": "hrguo@mail.tfrin.gov.tw",
+      "7": "張晏瑋",
+      "8": "ywchang@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "黃慶輝",
+      "2": "chhuang02@mail.tfrin.gov.tw",
+      "3": "陳均龍",
+      "4": "jlchen@mail.tfrin.gov.tw",
+      "5": "宋嘉軒",
+      "6": "chsung@mail.tfrin.gov.tw",
+      "7": "杜明杰",
+      "8": "mctu@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "黃淑敏",
+      "2": "smhuang@mail.tfrin.gov.tw",
+      "3": "吳允暉",
+      "4": "yhwu@mail.tfrin.gov.tw",
+      "5": "何欣珏",
+      "6": "scho@mail.tfrin.gov.tw",
+      "7": "林禹承",
+      "8": "yclin06@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "金映玥",
+      "2": "yychin@mail.tfrin.gov.tw",
+      "3": "金建邦",
+      "4": "cpchin@mail.tfrin.gov.tw",
+      "5": "林芳安",
+      "6": "falin@mail.tfrin.gov.tw",
+      "7": "陳文君 ",
+      "8": "wcchen@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "陳凱琳",
+      "2": "klchen@mail.tfrin.gov.tw",
+      "3": "陳人裕",
+      "4": "rychanu@mail.tfrin.gov.tw",
+      "5": "王郁峻",
+      "6": "ycwang@mail.tfrin.gov.tw",
+      "7": "高翊峰 ",
+      "8": "yfkao@mail.tfrin.gov.tw "
+    },
+    {
+      "1": "洪煜翔",
+      "2": "yxhung@mail.tfrin.gov.tw",
+      "3": "茬家續",
+      "4": "chchih@mail.tfrin.gov.tw",
+      "5": "趙鐿涵",
+      "6": "yhchao@mail.tfrin.gov.tw",
+      "7": "何晟瑩",
+      "8": "lpho@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "陳彥伶",
+      "2": "ylchen01@mail.tfrin.gov.tw",
+      "3": "羅方君",
+      "4": "fjluo@mail.tfrin.gov.tw",
+      "5": "顏綵葭",
+      "6": "cjyen@mail.tfrin.gov.tw",
+      "7": "歐秀美",
+      "8": "hmou@mail.tfrin.gov.tw "
+    },
+    {
+      "1": "楊堉維",
+      "2": "ywyang@mail.tfrin.gov.tw",
+      "3": "張海龍",
+      "4": "hlchang@mail.tfrin.gov.tw",
+      "5": "劉呈威",
+      "6": "cwliu@mail.tfrin.gov.tw",
+      "7": "杜中菁",
+      "8": "cctu@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "楊清閔",
+      "2": "cmyang@mail.tfrin.gov.tw",
+      "3": "嚴國維",
+      "4": "kwyen@mail.tfrin.gov.tw",
+      "5": "劉玉琳",
+      "6": "ylliu@mail.tfrin.gov.tw",
+      "7": "洪祥瑀",
+      "8": "hyhung@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "周洪鑫",
+      "2": "hhchou@mail.tfrin.gov.tw",
+      "3": "黃鼎傑",
+      "4": "tchuang@mail.tfrin.gov.tw",
+      "5": "童王筠",
+      "6": "wytong@mail.tfrin.gov.tw",
+      "7": "彭鈺婷",
+      "8": "ytpeng@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "郭鎂慧",
+      "2": "mhkuo@mail.tfrin.gov.tw",
+      "3": "張芸甄",
+      "4": "ycchang01@mail.tfrin.gov.tw",
+      "5": "陳慧君",
+      "6": "hcchen@mail.tfrin.gov.tw",
+      "7": "吳依玲",
+      "8": "ylwu@mail.tfrin.gov.tw"
+    },
+    {
+      "3": "葉欣柔",
+      "4": "hjyeh@mail.tfrin.gov.tw",
+      "5": "劉亭",
+      "6": "tliu@mail.tfrin.gov.tw",
+      "7": "張曜鵬",
+      "8": "ypzhang@mail.tfrin.gov.tw"
+    },
+    {
+      "3": "李茂熒",
+      "4": "mylee@mail.tfrin.gov.tw",
+      "7": "林鈺哲",
+      "8": "yclin09@mail.tfrin.gov.tw"
+    },
+    {
+      "3": "蔡孟昌",
+      "4": "mctsai@mail.tfrin.gov.tw"
+    },
+    {
+      "3": "林以芯",
+      "4": "yxlin@mail.tfrin.gov.tw"
+    },
+    {
+      "3": "陳香蓉",
+      "4": "hjchen@mail.tfrin.gov.tw"
+    },
+    {
+      "3": "胡家維",
+      "4": "cwhu01@mail.tfrin.gov.tw"
+    },
+    {
+      "3": "丁一",
+      "4": "iting@mail.tfrin.gov.tw"
+    },
+    {
+      "3": "簡進財",
+      "4": "ctchin@mail.tfrin.gov.tw"
+    },
+    {
+      "3": "柯慧玲",
+      "4": "hlko@mail.tfrin.gov.tw"
+    },
+    {
+      "3": "喻倚蓉",
+      "4": "yryu@mail.tfrin.gov.tw"
+    },
+    {
+      "3": "林翰揚",
+      "4": "hylin@mail.tfrin.gov.tw"
+    },
+    {
+      "3": "張瑋珍",
+      "4": "wcchang@mail.tfrin.gov.tw"
+    },
+    {
+      "3": "陳春美",
+      "4": "cmchen@mail.tfrin.gov.tw"
+    },
+    {
+      "3": "陳律祺",
+      "4": "lcchen@mail.tfrin.gov.tw"
+    },
+    {
+      "3": "陳正達",
+      "4": "jdchen@mail.tfrin.gov.tw"
+    },
+    {
+      "3": "陳琬琪",
+      "4": "wcchen03@mail.tfrin.gov.tw"
+    },
+    {
+      "3": "陳彥賓",
+      "4": "ybchen@mail.tfrin.gov.tw"
+    },
+    {
+      "3": "黃謙",
+      "4": "chuang01@mail.tfrin.gov.tw"
+    }
+  ],
+  "分中心": [
+    {
+      "1": "分中心"
+    },
+    {
+      "1": "淡水養殖研究中心",
+      "3": "海水養殖研究中心",
+      "5": "沿近海漁業生物研究中心",
+      "7": "東港養殖研究中心",
+      "9": "東部漁業生物研究中心",
+      "11": "澎湖漁業生物研究中心"
+    },
+    {
+      "1": "楊順德",
+      "2": "sdyang@mail.tfrin.gov.tw",
+      "3": "朱永桐",
+      "4": "ytchu@mail.tfrin.gov.tw",
+      "5": "翁進興 ",
+      "6": "j-s.ueng@mail.tfrin.gov.tw",
+      "7": "吳豐成 ",
+      "8": "fcwu@mail.tfrin.gov.tw",
+      "9": "江偉全",
+      "10": "wcchiang@mail.tfrin.gov.tw",
+      "11": "城振誠",
+      "12": "cccheng@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "莊凱婷",
+      "2": "ktchuang@mail.tfrin.gov.tw",
+      "3": "陳惠姿",
+      "4": "htchen@mail.tfrin.gov.tw",
+      "5": "潘惠婉",
+      "6": "hwpan@mail.tfrin.gov.tw",
+      "7": "陳麗鴦",
+      "8": "ly.chen@mail.tfrin.gov.tw",
+      "9": "蔡碧玲",
+      "10": "bltsai@mail.tfrin.gov.tw",
+      "11": "謝恆毅",
+      "12": "hernyi@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "黃德威",
+      "2": "dwhuang@mail.tfrin.gov.tw",
+      "3": "吳育甄",
+      "4": "ycwu@mail.tfrin.gov.tw",
+      "5": "藍揚麒",
+      "6": "yclan@mail.tfrin.gov.tw",
+      "7": "陳昶秀",
+      "8": "ch.chen@mail.tfrin.gov.tw",
+      "9": "許儷玉",
+      "10": "lyhsu@mail.tfrin.gov.tw",
+      "11": "陳麗瑩",
+      "12": "lychen01@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "康明珠",
+      "2": "mckang@mail.tfrin.gov.tw",
+      "3": "林峰右",
+      "4": "fylin@mail.tfrin.gov.tw",
+      "5": "張麗美",
+      "6": "lmchang@mail.tfrin.gov.tw",
+      "7": "洪彩敏",
+      "8": "tmhomg@mail.tfrin.gov.tw",
+      "9": "李沛珊",
+      "10": "pslee@mail.tfrin.gov.tw",
+      "11": "張戴陽",
+      "12": "tychang@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "劉恩良",
+      "2": "ellau@mail.tfrin.gov.tw",
+      "3": "郭科良",
+      "4": "klkuo@mail.tfrin.gov.tw",
+      "5": "黃建智",
+      "6": "jzhuang@mail.tfrin.gov.tw",
+      "7": "陳陽德",
+      "8": "ydchen@mail.tfrin.gov.tw",
+      "9": "吳瑞賢",
+      "10": "jhwu@mail.tfrin.gov.tw",
+      "11": "歐啟明",
+      "12": "cmou@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "蘇慧敏",
+      "2": "hmsu01@mail.tfrin.gov.tw",
+      "3": "陳又甄",
+      "4": "yjchen@mail.tfrin.gov.tw",
+      "5": "賴繼昌",
+      "6": "cclai@mail.tfrin.gov.tw",
+      "7": "李彥宏",
+      "8": "yhlee@mail.tfrin.gov.tw",
+      "9": "鄭明忠",
+      "10": "mjcheng@mail.tfrin.gov.tw",
+      "11": "邱韻霖",
+      "12": "ylchiu@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "王俐文",
+      "2": "lwwang@mail.tfrin.gov.tw",
+      "3": "黃國彰",
+      "4": "kchuang@mail.tfrin.gov.tw",
+      "5": "陳郁凱",
+      "6": "ykchen@mail.tfrin.gov.tw",
+      "7": "楊明樺",
+      "8": "mhyang@mail.tfrin.gov.tw",
+      "9": "周爰鎮",
+      "10": "ytchou@mail.tfrin.gov.tw",
+      "11": "劉再豐",
+      "12": "tfliou@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "張凱傑",
+      "2": "kcchang@mail.tfrin.gov.tw",
+      "3": "鄭鴻輝",
+      "4": "hhcheng@mail.tfrin.gov.tw",
+      "5": "何珈欣",
+      "6": "jshe@mail.tfrin.gov.tw",
+      "7": "許月娥",
+      "8": "yohsu@mail.tfrin.gov.tw",
+      "9": "陳鏗元",
+      "10": "kychen@mail.tfrin.gov.tw",
+      "11": "蔡忠和",
+      "12": "chtsai@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "陳永欣",
+      "2": "yhchen01@mail.tfrin.gov.tw",
+      "3": "邱靜山",
+      "4": "cschiu@mail.tfrin.gov.tw",
+      "5": "黃星翰",
+      "6": "hhhuang@mail.tfrin.gov.tw",
+      "7": "賴哲翊",
+      "8": "jylai@mail.tfrin.gov.tw",
+      "9": "黃侑勖",
+      "10": "yshuang@mail.tfrin.gov.tw",
+      "11": "陳仁偉",
+      "12": "jwchen@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "黃麗玲",
+      "2": "llhuang@mail.tfrin.gov.tw",
+      "3": "胡益順",
+      "4": "yishu@mail.tfrin.gov.tw",
+      "5": "賴蓉葦",
+      "6": "rwlai@mail.tfrin.gov.tw",
+      "7": "林武得",
+      "8": "wdlin@mail.tfrin.gov.tw",
+      "9": "江玉瑛",
+      "10": "yyjiang@mail.tfrin.gov.tw",
+      "11": "廖紫嬿",
+      "12": "tyliao@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "陳榮華",
+      "2": "rhchen@mail.tfrin.gov.tw",
+      "3": "謝淑秋",
+      "4": "schsieh@mail.tfrin.gov.tw",
+      "5": "楊紹弘",
+      "6": "shyang@mail.tfrin.gov.tw",
+      "7": "黃維能",
+      "8": "wnhuang@mail.tfrin.gov.tw",
+      "9": "陳玉萍",
+      "10": "ypchen@mail.tfrin.gov.tw",
+      "11": "許雅筑",
+      "12": "yzxu@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "蕭玉晨",
+      "2": "ychsiao@mail.tfrin.gov.tw",
+      "3": "張秉宏",
+      "4": "phchang@mail.tfrin.gov.tw",
+      "5": "林冠宏",
+      "6": "ghlin@mail.tfrin.gov.tw",
+      "7": "余淑楓",
+      "8": "sfyu@mail.tfrin.gov.tw",
+      "9": "張景淳",
+      "10": "ctchang@mail.tfrin.gov.tw",
+      "11": "林慧秋",
+      "12": "hclin@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "陳冠如",
+      "2": "grchen@mail.tfrin.gov.tw",
+      "3": "黃玟霜",
+      "4": "wshuang@mail.tfrin.gov.tw",
+      "5": "陳秋月",
+      "6": "cychen2@mail.tfrin.gov.tw",
+      "7": "周芷儀",
+      "8": "cychou@mail.tfrin.gov.tw",
+      "9": "黃君毅",
+      "10": "jyhuang@mail.tfrin.gov.tw",
+      "11": "陳東本",
+      "12": "tpchen@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "陳念慈",
+      "2": "ncchen@mail.tfrin.gov.tw",
+      "3": "邱沛盛",
+      "4": "pschiu@mail.tfrin.gov.tw",
+      "5": "吳伊淑",
+      "6": "yswu@mail.tfrin.gov.tw",
+      "7": "葉怡均",
+      "8": "ycyeh@mail.tfrin.gov.tw",
+      "9": "董家宏",
+      "10": "jhdong@mail.tfrin.gov.tw",
+      "11": "郭彭",
+      "12": "pkuo@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "陳建彰",
+      "2": "ccchen01@mail.tfrin.gov.tw",
+      "3": "陳建智",
+      "4": "ccchen02@mail.tfrin.gov.tw",
+      "5": "張致銜",
+      "6": "chchang@mail.tfrin.gov.tw",
+      "7": "許自研",
+      "8": "zyxu@mail.tfrin.gov.tw",
+      "9": "許紅虹",
+      "10": "hhshu@mail.tfrin.gov.tw",
+      "11": "陳彥愷",
+      "12": "ykchen01@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "黃瀛生",
+      "2": "yshuang01@mail.tfrin.gov.tw",
+      "3": "張素容",
+      "4": "sjchang@mail.tfrin.gov.tw",
+      "5": "黃世龍",
+      "6": "slhaumg@mail.tfrin.gov.tw",
+      "7": "胡峻瑋",
+      "8": "cwhu@mail.tfrin.gov.tw",
+      "9": "李任棋",
+      "10": "hclee@mail.tfrin.gov.tw",
+      "11": "呂逸林",
+      "12": "yllu@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "陳雅亭",
+      "2": "ytchen01@mail.tfrin.gov.tw",
+      "3": "劉于溶",
+      "4": "yjliu@mail.tfrin.gov.tw",
+      "5": "王銘言",
+      "6": "mywang@mail.tfrin.gov.tw",
+      "7": "陳文振",
+      "8": "wjchen@mail.tfrin.gov.tw",
+      "9": "邱俊豪",
+      "10": "jhchiou@mail.tfrin.gov.tw",
+      "11": "許鐘鋼",
+      "12": "ckhsu@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "陳雨農",
+      "2": "ynchen@mail.tfrin.gov.tw",
+      "3": "黃致中",
+      "4": "jjhuang@mail.tfrin.gov.tw",
+      "5": "陳明展",
+      "6": "mjchern@mail.tfrin.gov.tw",
+      "7": "劉宥均",
+      "8": "ycliu@mail.tfrin.gov.tw",
+      "9": "林憲忠",
+      "10": "sjlin@mail.tfrin.gov.tw",
+      "11": "吳玉霞",
+      "12": "yhwu01@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "楊碧雪",
+      "2": "bxyang@mail.tfrin.gov.tw",
+      "3": "邱允志",
+      "4": "ycchiu@mail.tfrin.gov.tw",
+      "5": "蔡宏義",
+      "6": "hytsay@mail.tfrin.gov.tw",
+      "7": "王淑欣",
+      "8": "shwang@mail.tfrin.gov.tw",
+      "9": "邱燕華",
+      "10": "yhchiu@mail.tfrin.gov.tw",
+      "11": "劉素華",
+      "12": "shliu@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "李曜辰",
+      "2": "yclee@mail.tfrin.gov.tw",
+      "3": "傅怡禎",
+      "4": "yzfu@mail.tfrin.gov.tw",
+      "5": "蔡安傑",
+      "6": "ajtsay@mail.tfrin.gov.tw",
+      "7": "王鐘慶",
+      "8": "zqwang@mail.tfrin.gov.tw",
+      "9": "李國瑋",
+      "10": "gwlee@mail.tfrin.gov.tw",
+      "11": "鄭靜怡",
+      "12": "cycheng01@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "謝豐群",
+      "2": "fchsieh@mail.tfrin.gov.tw",
+      "3": "薛守志",
+      "4": "schsueh@mail.tfrin.gov.tw",
+      "5": "蔡明益",
+      "6": "mytsay@mail.tfrin.gov.tw",
+      "7": "蘇皇銘",
+      "8": "hmsu02@mail.tfrin.gov.tw",
+      "9": "陳重元",
+      "10": "cychen03@mail.tfrin.gov.tw",
+      "11": "林绣美",
+      "12": "hmlin@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "劉姵妏",
+      "2": "pwliu@mail.tfrin.gov.tw",
+      "3": "余冠霖",
+      "4": "klyu@mail.tfrin.gov.tw",
+      "5": "趙仲昆",
+      "6": "nkhsiu@mail.tfrin.gov.tw",
+      "7": "利淑如",
+      "8": "sjli@mail.tfrin.gov.tw",
+      "9": "田伶任",
+      "10": "ljtien@mail.tfrin.gov.tw",
+      "11": "許秀媛",
+      "12": "hyhsu@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "梁晏甄",
+      "2": "ycliang@mail.tfrin.gov.tw",
+      "3": "許益誠",
+      "4": "ychsu@mail.tfrin.gov.tw",
+      "5": "李垟呏",
+      "6": "yllee01@mail.tfrin.gov.tw",
+      "7": "鄭博仁",
+      "8": "brjheng@mail.tfrin.gov.tw",
+      "9": "范氏碧",
+      "10": "spfan@mail.tfrin.gov.tw",
+      "11": "黃志弘",
+      "12": "chhuang01@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "邱詠傑",
+      "2": "ycchiu01@mail.tfrin.gov.tw",
+      "3": "黃煒翔",
+      "4": "whhuang@mail.tfrin.gov.tw",
+      "5": "許益銘",
+      "6": "imhsu@mail.tfrin.gov.tw",
+      "7": "陳俊安",
+      "8": "cachen@mail.tfrin.gov.tw",
+      "9": "蔡美滿",
+      "10": "mmtsai@mail.tfrin.gov.tw",
+      "11": "陳其欽",
+      "12": "ccchen@mail.tfrin.gov.tw"
+    },
+    {
+      "3": "林志訓",
+      "4": "chlin01@mail.tfrin.gov.tw",
+      "5": "林堉琪",
+      "6": "yclin04@mail.tfrin.gov.tw",
+      "7": "林如謙",
+      "8": "jclin@mail.tfrin.gov.tw",
+      "9": "陳正發",
+      "10": "cfchen@mail.tfrin.gov.tw",
+      "11": "陳岳川",
+      "12": "ycchen@mail.tfrin.gov.tw"
+    },
+    {
+      "5": "鄭力綺",
+      "6": "lccheng@mail.tfrin.gov.tw",
+      "7": "洪崑龍",
+      "8": "klhong@mail.tfrin.gov.tw",
+      "9": "許嘉閔",
+      "10": "cmhsu@mail.tfrin.gov.tw",
+      "11": "冼宜樂",
+      "12": "ylshen@mail.tfrin.gov.tw"
+    },
+    {
+      "5": "劉仁睦",
+      "6": "jmliu@mail.tfrin.gov.tw",
+      "7": "周子逸",
+      "8": "zychou@mail.tfrin.gov.tw",
+      "9": "楊一男",
+      "10": "ynyang@mail.tfrin.gov.tw",
+      "11": "葉宇庭",
+      "12": "ytyeh@mail.tfrin.gov.tw"
+    },
+    {
+      "5": "徐華遜",
+      "6": "hhhsu@mail.tfrin.gov.tw",
+      "7": "陳盈達",
+      "8": "ytchen02@mail.tfrin.gov.tw",
+      "9": "高丁振傑",
+      "10": "jjkao@mail.tfrin.gov.tw",
+      "11": "許思婕",
+      "12": "schsu@mail.tfrin.gov.tw"
+    },
+    {
+      "5": "吳浩祥",
+      "6": "hswu@mail.tfrin.gov.tw",
+      "7": "蘇義哲",
+      "8": "ycsu@mail.tfrin.gov.tw",
+      "11": "莊美英",
+      "12": "myzhuang@mail.tfrin.gov.tw"
+    },
+    {
+      "5": "楊錦樺",
+      "6": "jhyang@mail.tfrin.gov.tw",
+      "7": "林志祐",
+      "8": "jylin01@mail.tfrin.gov.tw",
+      "11": "劉高文",
+      "12": "gwliu@mail.tfrin.gov.tw"
+    },
+    {
+      "7": "張軒銘",
+      "8": "hmchang@mail.tfrin.gov.tw",
+      "11": "董欣婷",
+      "12": "httung@mail.tfrin.gov.tw"
+    },
+    {
+      "7": "蔡欣諫",
+      "8": "hctsai@mail.tfrin.gov.tw",
+      "11": "楊子泰",
+      "12": "jtyang@mail.tfrin.gov.tw"
+    },
+    {
+      "7": "杜信旻",
+      "8": "hmtu@mail.tfrin.gov.tw",
+      "11": "歐麗榛",
+      "12": "lcou@mail.tfrin.gov.tw"
+    },
+    {
+      "7": "翁識博",
+      "8": "spweng@mail.tfrin.gov.tw",
+      "11": "黃信仁",
+      "12": "xrhuang@mail.tfrin.gov.tw"
+    },
+    {
+      "7": "李奕昀",
+      "8": "yylee@mail.tfrin.gov.tw",
+      "11": "陳久林",
+      "12": "clchen@mail.tfrin.gov.tw"
+    },
+    {
+      "7": "柯思羽",
+      "8": "syke@mail.tfrin.gov.tw",
+      "11": "林育助",
+      "12": "yclin05@mail.tfrin.gov.tw"
+    },
+    {
+      "7": "郭秋慧",
+      "8": "chkuo@mail.tfrin.gov.tw",
+      "11": "劉祐瑜",
+      "12": "yyliu@mail.tfrin.gov.tw"
+    },
+    {
+      "11": "顏玉婷",
+      "12": "ytyang@mail.tfrin.gov.tw"
+    },
+    {
+      "11": "鐘冠翔",
+      "12": "khchung@mail.tfrin.gov.tw"
+    },
+    {
+      "11": "鄭之瑀",
+      "12": "jyjheng@mail.tfrin.gov.tw"
+    },
+    {
+      "11": "陳瑞谷",
+      "12": "rgchen@mail.tfrin.gov.tw"
+    },
+    {
+      "11": "顏向鴻",
+      "12": "shyan@mail.tfrin.gov.tw"
+    },
+    {
+      "11": "謝易叡",
+      "12": "yjhsieh@mail.tfrin.gov.tw"
+    },
+    {
+      "11": "李政毅",
+      "12": "zyli@mail.tfrin.gov.tw"
+    },
+    {
+      "11": "蘇柏維",
+      "12": "pwsu@mail.tfrin.gov.tw"
+    },
+    {
+      "11": "楊松儒",
+      "12": "sjyang@mail.tfrin.gov.tw"
+    },
+    {
+      "11": "林連蒂",
+      "12": "ldlin@mail.tfrin.gov.tw"
+    },
+    {
+      "11": "林子翔",
+      "12": "thlin@mail.tfrin.gov.tw"
+    },
+    {
+      "11": "許明如",
+      "12": "mrxu@mail.tfrin.gov.tw"
+    },
+    {
+      "11": "何寛昊",
+      "12": "khho@mail.tfrin.gov.tw"
+    },
+    {
+      "11": "張庭睿",
+      "12": "tjchang@mail.tfrin.gov.tw"
+    },
+    {
+      "11": "陳佩榆",
+      "12": "pychen01@mail.tfrin.gov.tw"
+    },
+    {
+      "1": "112.03報廢"
+    }
+  ]
+}
