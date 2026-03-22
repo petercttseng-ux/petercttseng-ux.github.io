@@ -981,15 +981,19 @@ let selectedRole = 'manager';
 // ===== USER MANAGEMENT =====
 function initUsers() {
   if (Object.keys(users).length === 0) {
+    // 唯一預設管理員：曾振德（主任秘書室）
+    const defaultAdmin = 'cttseng@mail.tfrin.gov.tw';
     for (const [dept, people] of Object.entries(PERSONNEL)) {
       for (const p of people) {
         const key = p.email.trim().toLowerCase();
+        let role = 'executor';
+        if (key === defaultAdmin) role = 'admin';
         users[key] = {
           name: p.name.trim(),
           email: p.email.trim(),
           dept: dept,
           password: '1234',
-          role: 'executor',
+          role: role,
           active: true,
           createdAt: new Date().toISOString()
         };
