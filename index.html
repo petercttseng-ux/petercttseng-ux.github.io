@@ -704,6 +704,26 @@ body {
     </div>
     <div class="login-body">
       <div class="form-group">
+        <label>選擇登入角色</label>
+        <div class="role-selector">
+          <button type="button" class="role-btn" onclick="selectRole('admin', this)">
+            <span class="role-icon">&#x2699;&#xfe0f;</span>
+            <span class="role-name">管理員</span>
+            <span class="role-desc">系統與帳號管理</span>
+          </button>
+          <button type="button" class="role-btn active" onclick="selectRole('manager', this)">
+            <span class="role-icon">&#x1f4cb;</span>
+            <span class="role-name">交辦人</span>
+            <span class="role-desc">建立與管理交辦事項</span>
+          </button>
+          <button type="button" class="role-btn" onclick="selectRole('executor', this)">
+            <span class="role-icon">&#x1f4dd;</span>
+            <span class="role-name">執行人</span>
+            <span class="role-desc">查看與回報執行進度</span>
+          </button>
+        </div>
+      </div>
+      <div class="form-group">
         <label>選擇單位</label>
         <select id="loginDept" onchange="onLoginDeptChange()">
           <option value="">請選擇單位</option>
@@ -1056,14 +1076,21 @@ function doLogin() {
     return;
   }
 
-  // Login success - role determined by account, not selection
-  const loginRole = user.role; // admin, manager, or executor
+  // Role hierarchy check: admin > manager > executor
+  const roleLevel = { admin: 3, manager: 2, executor: 1 };
+  if (roleLevel[selectedRole] > roleLevel[user.role]) {
+    const needRole = ROLE_MAP[selectedRole].label;
+    errEl.textContent = '此帳號無' + needRole + '權限，請聯繫管理員升級角色';
+    return;
+  }
+
+  // Login success - use selected role (may be lower than account role)
   currentUser = {
     email: user.email,
     name: user.name,
     dept: user.dept || dept,
-    role: loginRole,
-    loginRole: loginRole
+    role: user.role,
+    loginRole: selectedRole
   };
 
   sessionStorage.setItem('fri_session', JSON.stringify(currentUser));
