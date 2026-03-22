@@ -1758,7 +1758,6 @@ async function init() {
     const savedSession = sessionStorage.getItem('fri_session');
     if (savedSession) {
       const user = JSON.parse(savedSession);
-      // 靜默恢復，不顯示歡迎 toast
       currentUser = user;
       document.getElementById('header-user').textContent = `${user.name}（${user.dept}）`;
       document.getElementById('login-screen').style.display = 'none';
@@ -1770,6 +1769,9 @@ async function init() {
         const navItems = document.querySelectorAll('.nav-item');
         if (navItems[1]) navItems[1].querySelector('span.nav-icon').nextSibling.textContent = ' 我的交辦';
       }
+      // session 還原後再次強制拉取最新資料，確保跨裝置一致
+      await loadTasks();
+      setSyncStatus('ok', '已同步 ' + new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'}));
       refreshAll();
       navigate('dashboard');
     }
@@ -1884,7 +1886,7 @@ function onLoginDeptChange() {
   });
 }
 
-function completeLogin(user) {
+async function completeLogin(user) {
   const { dept, name, role } = user;
   currentUser = { dept, name, role };
   // 儲存 session，重新整理後自動還原
@@ -1900,14 +1902,21 @@ function completeLogin(user) {
   pendingLoginUser = null;
 
   if (role === 'assignee') {
-    // 承辦人：隱藏新增按鈕、隱藏單位篩選（只看自己的任務）
     document.getElementById('btn-create-task').style.display = 'none';
     const deptFilter = document.getElementById('filter-dept');
-    if (deptFilter) deptFilter.closest('.filter-group') && (deptFilter.style.display = 'none');
-    // 更新側欄標籤
+    if (deptFilter) deptFilter.style.display = 'none';
     const navItems = document.querySelectorAll('.nav-item');
     if (navItems[1]) navItems[1].querySelector('span.nav-icon').nextSibling.textContent = ' 我的交辦';
   }
+
+  // 登入後強制從共用資料庫重新拉取最新資料
+  // 確保同一姓名在不同電腦登入時看到完全一致的資料
+  setSyncStatus('syncing', '載入資料中...');
+  showDbLoading(true, '正在載入最新交辦資料...');
+  await loadTasks();
+  showDbLoading(false);
+  setSyncStatus('ok', '已同步 ' + new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'}));
+
   refreshAll();
   navigate('dashboard');
   showToast(`歡迎，${name}！`, 'success');
